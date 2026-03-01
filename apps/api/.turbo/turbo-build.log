@@ -1,0 +1,76 @@
+
+> @recovery-platform/api@0.1.0 build /Users/home/Desktop/cdl/apps/api
+> nest build
+
+[96msrc/app.module.ts[0m:[93m7[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module './modules/tasks/tasks.module' or its corresponding type declarations.
+
+[7m7[0m import { TasksModule } from './modules/tasks/tasks.module';
+[7m [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/app.module.ts[0m:[93m8[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module './modules/notes/notes.module' or its corresponding type declarations.
+
+[7m8[0m import { NotesModule } from './modules/notes/notes.module';
+[7m [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/app.module.ts[0m:[93m9[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module './modules/documents/documents.module' or its corresponding type declarations.
+
+[7m9[0m import { DocumentsModule } from './modules/documents/documents.module';
+[7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/app.module.ts[0m:[93m10[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module './modules/verifications/verifications.module' or its corresponding type declarations.
+
+[7m10[0m import { VerificationsModule } from './modules/verifications/verifications.module';
+[7m  [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/app.module.ts[0m:[93m12[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module './modules/audit/audit.module' or its corresponding type declarations.
+
+[7m12[0m import { AuditModule } from './modules/audit/audit.module';
+[7m  [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/auth/auth.module.ts[0m:[93m3[0m:[93m29[0m - [91merror[0m[90m TS2307: [0mCannot find module './auth.service' or its corresponding type declarations.
+
+[7m3[0m import { AuthService } from './auth.service';
+[7m [0m [91m                            ~~~~~~~~~~~~~~~~[0m
+[96msrc/auth/auth.module.ts[0m:[93m4[0m:[93m32[0m - [91merror[0m[90m TS2307: [0mCannot find module './auth.controller' or its corresponding type declarations.
+
+[7m4[0m import { AuthController } from './auth.controller';
+[7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/auth/clerk.strategy.ts[0m:[93m2[0m:[93m34[0m - [91merror[0m[90m TS2307: [0mCannot find module '@nestjs/passport' or its corresponding type declarations.
+
+[7m2[0m import { PassportStrategy } from '@nestjs/passport';
+[7m [0m [91m                                 ~~~~~~~~~~~~~~~~~~[0m
+[96msrc/auth/clerk.strategy.ts[0m:[93m3[0m:[93m38[0m - [91merror[0m[90m TS2307: [0mCannot find module 'passport-jwt' or its corresponding type declarations.
+
+[7m3[0m import { ExtractJwt, Strategy } from 'passport-jwt';
+[7m [0m [91m                                     ~~~~~~~~~~~~~~[0m
+[96msrc/modules/billing/billing.module.ts[0m:[93m2[0m:[93m32[0m - [91merror[0m[90m TS2307: [0mCannot find module './billing.service' or its corresponding type declarations.
+
+[7m2[0m import { BillingService } from './billing.service';
+[7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/billing/billing.module.ts[0m:[93m3[0m:[93m35[0m - [91merror[0m[90m TS2307: [0mCannot find module './billing.controller' or its corresponding type declarations.
+
+[7m3[0m import { BillingController } from './billing.controller';
+[7m [0m [91m                                  ~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/cases/cases.module.ts[0m:[93m2[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module './cases.service' or its corresponding type declarations.
+
+[7m2[0m import { CasesService } from './cases.service';
+[7m [0m [91m                             ~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/cases/cases.module.ts[0m:[93m3[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module './cases.controller' or its corresponding type declarations.
+
+[7m3[0m import { CasesController } from './cases.controller';
+[7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/people/dto/create-person.dto.ts[0m:[93m2[0m:[93m28[0m - [91merror[0m[90m TS2307: [0mCannot find module '@recovery-platform/types' or its corresponding type declarations.
+
+[7m2[0m import { PersonType } from '@recovery-platform/types';
+[7m [0m [91m                           ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/people/people.service.ts[0m:[93m4[0m:[93m28[0m - [91merror[0m[90m TS2307: [0mCannot find module '@recovery-platform/types' or its corresponding type declarations.
+
+[7m4[0m import { PersonType } from '@recovery-platform/types';
+[7m [0m [91m                           ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/webhooks/webhooks.controller.ts[0m:[93m2[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module './webhooks.service' or its corresponding type declarations.
+
+[7m2[0m import { WebhooksService } from './webhooks.service';
+[7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/modules/webhooks/webhooks.module.ts[0m:[93m2[0m:[93m33[0m - [91merror[0m[90m TS2307: [0mCannot find module './webhooks.service' or its corresponding type declarations.
+
+[7m2[0m import { WebhooksService } from './webhooks.service';
+[7m [0m [91m                                ~~~~~~~~~~~~~~~~~~~~[0m
+
+Found 17 error(s).
+
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

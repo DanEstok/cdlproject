@@ -1,0 +1,12 @@
+export * from './cn';
+export declare const formatDate: (date: Date | string) => string;
+export declare const formatDateTime: (date: Date | string) => string;
+export declare const formatPhone: (phone: string) => string;
+export declare const formatCurrency: (cents: number) => string;
+export declare const formatFileSize: (bytes: number) => string;
+export declare const isValidEmail: (email: string) => boolean;
+export declare const isValidPhone: (phone: string) => boolean;
+export declare const generateId: () => string;
+export declare const slugify: (text: string) => string;
+export declare const debounce: <T extends (...args: any[]) => any>(func: T, wait: number) => ((...args: Parameters<T>) => void);
+export declare const throttle: <T extends (...args: any[]) => any>(func: T, limit: number) => ((...args: Parameters<T>) => void);
