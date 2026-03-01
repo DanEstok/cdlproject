@@ -1,0 +1,4 @@
+export { default as eslintConfig } from './eslint.js';
+export { default as tsconfigBase } from './tsconfig.base.json';
+export { default as tailwindConfig } from './tailwind.config.js';
+export { default as postcssConfig } from './postcss.config.js';
