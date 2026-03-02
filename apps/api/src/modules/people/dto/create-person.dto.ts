@@ -1,10 +1,12 @@
-import { IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
-import { PersonType } from '@recovery-platform/types';
+import { IsString, IsOptional, IsEnum, IsEmail, IsDateString } from 'class-validator';
+
+export enum PersonType {
+  CLIENT = 'CLIENT',
+  CONTACT = 'CONTACT',
+  REFERRAL_SOURCE = 'REFERRAL_SOURCE',
+}
 
 export class CreatePersonDto {
-  @IsEnum(PersonType)
-  type: PersonType;
-
   @IsString()
   firstName: string;
 
@@ -12,24 +14,16 @@ export class CreatePersonDto {
   lastName: string;
 
   @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
   @IsString()
   phone?: string;
 
   @IsOptional()
   @IsString()
-  email?: string;
-
-  @IsOptional()
-  @IsDateString()
-  dob?: string;
-
-  @IsOptional()
-  @IsString()
   address?: string;
-
-  @IsOptional()
-  @IsString()
-  address2?: string;
 
   @IsOptional()
   @IsString()
@@ -42,4 +36,19 @@ export class CreatePersonDto {
   @IsOptional()
   @IsString()
   zip?: string;
+
+  @IsEnum(PersonType)
+  type: PersonType;
+
+  @IsOptional()
+  @IsDateString()
+  dateOfBirth?: string;
+
+  @IsOptional()
+  @IsString()
+  ssn?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }

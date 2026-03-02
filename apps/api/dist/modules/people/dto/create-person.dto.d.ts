@@ -1,14 +1,19 @@
-import { PersonType } from '@recovery-platform/types';
+export declare enum PersonType {
+    CLIENT = "CLIENT",
+    CONTACT = "CONTACT",
+    REFERRAL_SOURCE = "REFERRAL_SOURCE"
+}
 export declare class CreatePersonDto {
-    type: PersonType;
     firstName: string;
     lastName: string;
-    phone?: string;
     email?: string;
-    dob?: string;
+    phone?: string;
     address?: string;
-    address2?: string;
     city?: string;
     state?: string;
     zip?: string;
+    type: PersonType;
+    dateOfBirth?: string;
+    ssn?: string;
+    notes?: string;
 }

@@ -16,74 +16,50 @@ let PeopleService = class PeopleService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(createPersonDto, organizationId) {
+    async create(createPersonDto) {
         const person = await this.prisma.person.create({
             data: {
-                ...createPersonDto,
-                organizationId,
-                dob: createPersonDto.dob ? new Date(createPersonDto.dob) : null,
+                firstName: createPersonDto.firstName,
+                lastName: createPersonDto.lastName,
+                email: createPersonDto.email,
+                phone: createPersonDto.phone,
+                address: createPersonDto.address,
+                city: createPersonDto.city,
+                state: createPersonDto.state,
+                zip: createPersonDto.zip,
+                type: createPersonDto.type,
+                dob: createPersonDto.dateOfBirth ? new Date(createPersonDto.dateOfBirth) : undefined,
+                organization: {
+                    connect: { id: 'default-org' }
+                }
             },
-        });
-        await this.createAuditEvent({
-            organizationId,
-            actorUserId: null,
-            action: 'PERSON_CREATED',
-            entityType: 'Person',
-            entityId: person.id,
-            diffJson: { before: null, after: person },
         });
         return person;
     }
-    async findAll(organizationId, type, search) {
-        const where = {
-            organizationId,
-            ...(type && { type }),
-            ...(search && {
-                OR: [
-                    { firstName: { contains: search, mode: 'insensitive' } },
-                    { lastName: { contains: search, mode: 'insensitive' } },
-                    { email: { contains: search, mode: 'insensitive' } },
-                ],
-            }),
-        };
+    async findAll() {
         return this.prisma.person.findMany({
-            where,
-            orderBy: { createdAt: 'desc' },
+            where: {
+                organizationId: 'default-org',
+            },
         });
     }
-    async findOne(id, organizationId) {
+    async findOne(id) {
         return this.prisma.person.findFirst({
-            where: { id, organizationId },
+            where: {
+                id,
+                organizationId: 'default-org',
+            },
         });
     }
-    async update(id, updatePersonDto, organizationId) {
-        const existing = await this.findOne(id, organizationId);
-        if (!existing) {
-            throw new Error('Person not found');
-        }
-        const updated = await this.prisma.person.update({
+    async update(id, updatePersonDto) {
+        return this.prisma.person.update({
             where: { id },
-            data: {
-                ...updatePersonDto,
-                dob: updatePersonDto.dob ? new Date(updatePersonDto.dob) : undefined,
-            },
+            data: updatePersonDto,
         });
-        await this.createAuditEvent({
-            organizationId,
-            actorUserId: null,
-            action: 'PERSON_UPDATED',
-            entityType: 'Person',
-            entityId: id,
-            diffJson: { before: existing, after: updated },
-        });
-        return updated;
     }
-    async createAuditEvent(data) {
-        return this.prisma.auditEvent.create({
-            data: {
-                ...data,
-                actorClerkUserId: null,
-            },
+    async remove(id) {
+        return this.prisma.person.delete({
+            where: { id },
         });
     }
 };

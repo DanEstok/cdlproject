@@ -47,6 +47,7 @@ model User {
   verifiedVerifications Verification[] @relation("VerifiedBy")
   timeEntries         TimeEntry[]
   auditEvents         AuditEvent[] @relation("UserActor")
+  uploadedDocuments   Document[]   @relation("UploadedByUser")
 
   @@map("users")
 }
@@ -85,7 +86,7 @@ model Case {
   openedAt               DateTime  @default(now())
   closedAt               DateTime?
   primaryCaseManagerUserId String?
-  notes                  String?
+  caseNotes              String?
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -167,7 +168,6 @@ model Document {
   id               String       @id @default(cuid())
   organizationId   String
   caseId           String?
-  personId         String?
   uploadedByUserId String?
   uploadedByPersonId String?
   fileName         String
@@ -181,7 +181,6 @@ model Document {
 
   organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   case             Case?        @relation(fields: [caseId], references: [id])
-  person           Person?      @relation(fields: [personId], references: [id])
   uploadedByUser   User?        @relation("UploadedByUser", fields: [uploadedByUserId], references: [id])
   uploadedByPerson Person?      @relation("UploadedByPerson", fields: [uploadedByPersonId], references: [id])
   evidenceVerifications Verification[] @relation("EvidenceDocument")

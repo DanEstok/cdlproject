@@ -9,11 +9,16 @@ export declare class ClerkStrategy extends ClerkStrategy_base {
     private prisma;
     constructor(configService: ConfigService, prisma: PrismaService);
     validate(payload: any): Promise<{
-        userId: any;
-        clerkUserId: any;
-        role: any;
-        organizationId: any;
-        organization: any;
+        userId: string;
+        clerkUserId: string;
+        role: import("@prisma/client").$Enums.UserRole;
+        organizationId: string;
+        organization: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            name: string;
+        };
     }>;
 }
 export {};
