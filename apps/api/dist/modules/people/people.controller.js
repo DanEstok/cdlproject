@@ -18,17 +18,22 @@ const people_service_1 = require("./people.service");
 const create_person_dto_1 = require("./dto/create-person.dto");
 const organization_decorator_1 = require("../../common/decorators/organization.decorator");
 const organization_guard_1 = require("../../common/guards/organization.guard");
-const audit_interceptor_1 = require("../../common/interceptors/audit.interceptor");
 const common_2 = require("@nestjs/common");
 let PeopleController = class PeopleController {
     constructor(peopleService) {
         this.peopleService = peopleService;
     }
-    create(createPersonDto) {
+    getPublic() {
+        return { message: 'Public endpoint working', timestamp: new Date() };
+    }
+    testCreate(createPersonDto) {
         return this.peopleService.create(createPersonDto);
     }
     findAll(type, search) {
         return this.peopleService.findAll();
+    }
+    create(createPersonDto) {
+        return this.peopleService.create(createPersonDto);
     }
     findOne(id) {
         return this.peopleService.findOne(id);
@@ -42,15 +47,21 @@ let PeopleController = class PeopleController {
 };
 exports.PeopleController = PeopleController;
 __decorate([
-    (0, common_1.Post)(),
-    (0, organization_decorator_1.Organization)(),
+    (0, common_1.Get)('public'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PeopleController.prototype, "getPublic", null);
+__decorate([
+    (0, common_1.Post)('test-create'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_person_dto_1.CreatePersonDto]),
     __metadata("design:returntype", void 0)
-], PeopleController.prototype, "create", null);
+], PeopleController.prototype, "testCreate", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('test'),
+    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
     (0, organization_decorator_1.Organization)(),
     __param(0, (0, common_1.Query)('type')),
     __param(1, (0, common_1.Query)('search')),
@@ -59,7 +70,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], PeopleController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Post)(),
+    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
+    (0, organization_decorator_1.Organization)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_person_dto_1.CreatePersonDto]),
+    __metadata("design:returntype", void 0)
+], PeopleController.prototype, "create", null);
+__decorate([
     (0, common_1.Get)(':id'),
+    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
     (0, organization_decorator_1.Organization)(),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -68,6 +89,7 @@ __decorate([
 ], PeopleController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
     (0, organization_decorator_1.Organization)(),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -77,6 +99,7 @@ __decorate([
 ], PeopleController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
     (0, organization_decorator_1.Organization)(),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -85,8 +108,6 @@ __decorate([
 ], PeopleController.prototype, "remove", null);
 exports.PeopleController = PeopleController = __decorate([
     (0, common_1.Controller)('people'),
-    (0, common_2.UseGuards)(organization_guard_1.OrganizationGuard),
-    (0, common_2.UseInterceptors)(audit_interceptor_1.AuditInterceptor),
     __metadata("design:paramtypes", [people_service_1.PeopleService])
 ], PeopleController);
 //# sourceMappingURL=people.controller.js.map
