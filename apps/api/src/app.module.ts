@@ -9,6 +9,7 @@ import { DocumentsModule } from "./documents/documents.module";
 import { TasksModule } from "./tasks/tasks.module";
 import { NotesModule } from "./notes/notes.module";
 import { VerificationsModule } from "./verifications/verifications.module";
+import { TimelineModule } from "./timeline/timeline.module";
 import { JobsModule } from "./jobs/jobs.module";
 import { HealthController } from "./health.controller";
 
@@ -24,6 +25,7 @@ import { HealthController } from "./health.controller";
     TasksModule,
     NotesModule,
     VerificationsModule,
+    TimelineModule,
     JobsModule,
   ],
   controllers: [HealthController]

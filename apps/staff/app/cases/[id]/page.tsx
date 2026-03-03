@@ -45,6 +45,14 @@ type Verification = {
   createdAt: string;
 };
 
+type TimelineItem = {
+  at: string;
+  kind: "TASK" | "NOTE" | "DOCUMENT" | "VERIFICATION" | "AUDIT";
+  title: string;
+  subtitle?: string;
+  refId: string;
+};
+
 export default async function CasePage({ params }: { params: { id: string } }) {
   await ensureProvisioned();
 
@@ -53,6 +61,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const notes = await apiFetch<Note[]>(`/cases/${params.id}/notes`);
   const docs = await apiFetch<Document[]>(`/documents?caseId=${params.id}`);
   const verifs = await apiFetch<Verification[]>(`/cases/${params.id}/verifications`);
+  const timeline = await apiFetch<TimelineItem[]>(`/cases/${params.id}/timeline`);
 
   // For uploader (client-side), we need an actual token for browser calls
   const session = await auth();
@@ -77,6 +86,30 @@ export default async function CasePage({ params }: { params: { id: string } }) {
       <div style={{ marginTop: 8 }}>
         <strong>Status:</strong> {c.status}
       </div>
+
+      {/* TIMELINE */}
+      <section style={{ marginTop: 20 }}>
+        <h3>Timeline</h3>
+        <ul style={{ marginTop: 12 }}>
+          {timeline.map((i) => (
+            <li key={`${i.kind}-${i.refId}`} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <strong>{i.kind}</strong> | {new Date(i.at).toLocaleString()}
+                  <div style={{ marginTop: 4 }}>
+                    <strong>{i.title}</strong>
+                  </div>
+                  {i.subtitle ? <div style={{ marginTop: 4, fontSize: 13, opacity: 0.85 }}>{i.subtitle}</div> : null}
+                </div>
+
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  {i.kind === "DOCUMENT" ? <a href={`/documents/${i.refId}/download`}>Download</a> : null}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* DOCUMENTS */}
       <section style={{ marginTop: 20 }}>
