@@ -1,17 +1,19 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { Controller, Get, Post, Body, UseGuards } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { AuthGuard } from "./auth.guard";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('health')
+  @Get("health")
   getHealth() {
-    return { status: 'ok' };
+    return { status: "ok" };
   }
 
-  @Post('validate')
+  @Post("validate")
+  @UseGuards(AuthGuard)
   validateToken(@Body() body: { token: string }) {
-    return this.authService.validateToken(body.token);
+    return { valid: true };
   }
 }

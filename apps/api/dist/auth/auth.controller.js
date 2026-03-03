@@ -15,33 +15,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
+const auth_guard_1 = require("./auth.guard");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
     getHealth() {
-        return { status: 'ok' };
+        return { status: "ok" };
     }
     validateToken(body) {
-        return this.authService.validateToken(body.token);
+        return { valid: true };
     }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Get)('health'),
+    (0, common_1.Get)("health"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "getHealth", null);
 __decorate([
-    (0, common_1.Post)('validate'),
+    (0, common_1.Post)("validate"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "validateToken", null);
 exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)('auth'),
+    (0, common_1.Controller)("auth"),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map
