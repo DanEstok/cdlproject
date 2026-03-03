@@ -1,29 +1,30 @@
-import { PrismaClient, UserRole } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("Seeding database...");
+
+  // Create default organization only (no user)
   const org = await prisma.organization.upsert({
     where: { id: "00000000-0000-0000-0000-000000000001" },
     update: {},
     create: {
       id: "00000000-0000-0000-0000-000000000001",
-      name: "Dev Organization"
+      name: "Default Organization"
     }
   });
 
-  // This user is a placeholder. Replace clerkUserId with your real Clerk user id after first login.
-  await prisma.user.upsert({
-    where: { clerkUserId: "dev_clerk_user_id" },
-    update: { organizationId: org.id, role: UserRole.ADMIN, isActive: true },
-    create: {
-      organizationId: org.id,
-      clerkUserId: "dev_clerk_user_id",
-      role: UserRole.ADMIN
-    }
-  });
-
-  console.log("Seed complete.");
+  console.log("Created organization:", org);
+  console.log("Note: Users will be auto-provisioned on first login");
+  console.log("Seed complete!");
 }
 
-main().finally(async () => prisma.$disconnect());
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
