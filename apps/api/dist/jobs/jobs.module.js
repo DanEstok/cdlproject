@@ -8,22 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobsModule = void 0;
 const common_1 = require("@nestjs/common");
-const bullmq_1 = require("@nestjs/bullmq");
-const prisma_module_1 = require("../prisma/prisma.module");
+const jobs_service_1 = require("./jobs.service");
 let JobsModule = class JobsModule {
 };
 exports.JobsModule = JobsModule;
 exports.JobsModule = JobsModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            prisma_module_1.PrismaModule,
-            bullmq_1.BullModule.forRoot({
-                connection: {
-                    host: process.env.REDIS_HOST || "localhost",
-                    port: parseInt(process.env.REDIS_PORT || "6379"),
-                },
-            }),
-        ],
+        providers: [jobs_service_1.JobsService],
+        exports: [jobs_service_1.JobsService]
     })
 ], JobsModule);
 //# sourceMappingURL=jobs.module.js.map

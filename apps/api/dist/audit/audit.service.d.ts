@@ -12,13 +12,13 @@ export declare class AuditService {
         diffJson?: any;
     }): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
         actorUserId: string | null;
         actorClerkUserId: string | null;
         action: string;
         entityType: string;
         entityId: string;
         diffJson: import("@prisma/client/runtime/library").JsonValue | null;
-        createdAt: Date;
-        organizationId: string;
     }>;
 }

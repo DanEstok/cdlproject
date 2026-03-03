@@ -5,6 +5,9 @@ export declare class PeopleController {
     constructor(people: PeopleService);
     create(req: any, dto: CreatePersonDto): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -16,12 +19,12 @@ export declare class PeopleController {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
     list(req: any, type?: string, search?: string): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -33,12 +36,12 @@ export declare class PeopleController {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }[]>;
     get(req: any, id: string): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -50,12 +53,12 @@ export declare class PeopleController {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
     update(req: any, id: string, dto: UpdatePersonDto): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -67,8 +70,5 @@ export declare class PeopleController {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
 }

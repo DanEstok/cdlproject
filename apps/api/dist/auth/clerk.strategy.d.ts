@@ -14,9 +14,9 @@ export declare class ClerkStrategy extends ClerkStrategy_base {
         role: import("@prisma/client").$Enums.UserRole;
         organizationId: string;
         organization: {
+            name: string;
             id: string;
             createdAt: Date;
-            name: string;
         };
     }>;
 }

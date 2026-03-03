@@ -10,6 +10,9 @@ export declare class PeopleService {
         clerkUserId: string;
     }, dto: CreatePersonDto): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -21,15 +24,15 @@ export declare class PeopleService {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
     list(organizationId: string, params: {
         type?: string;
         search?: string;
     }): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -41,12 +44,12 @@ export declare class PeopleService {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }[]>;
     get(organizationId: string, id: string): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -58,15 +61,15 @@ export declare class PeopleService {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
     update(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, id: string, dto: UpdatePersonDto): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
         lastName: string;
@@ -78,8 +81,5 @@ export declare class PeopleService {
         city: string | null;
         state: string | null;
         postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
     }>;
 }

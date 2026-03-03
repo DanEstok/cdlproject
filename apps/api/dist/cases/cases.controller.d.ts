@@ -7,8 +7,8 @@ export declare class CasesController {
         client: {
             id: string;
             createdAt: Date;
-            updatedAt: Date;
             organizationId: string;
+            updatedAt: Date;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -23,22 +23,22 @@ export declare class CasesController {
         };
     } & {
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
-        createdAt: Date;
         updatedAt: Date;
-        organizationId: string;
-        clientPersonId: string;
     }>;
     list(req: any, status?: string, search?: string): Promise<({
         client: {
             id: string;
             createdAt: Date;
-            updatedAt: Date;
             organizationId: string;
+            updatedAt: Date;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -53,22 +53,22 @@ export declare class CasesController {
         };
     } & {
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
-        createdAt: Date;
         updatedAt: Date;
-        organizationId: string;
-        clientPersonId: string;
     })[]>;
     get(req: any, id: string): Promise<{
         client: {
             id: string;
             createdAt: Date;
-            updatedAt: Date;
             organizationId: string;
+            updatedAt: Date;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -83,47 +83,47 @@ export declare class CasesController {
         };
         enrollments: {
             id: string;
-            status: import("@prisma/client").$Enums.EnrollmentStatus;
             organizationId: string;
             caseId: string;
+            status: import("@prisma/client").$Enums.EnrollmentStatus;
             programType: import("@prisma/client").$Enums.ProgramType;
             startedAt: Date;
             endedAt: Date | null;
         }[];
     } & {
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
-        createdAt: Date;
         updatedAt: Date;
-        organizationId: string;
-        clientPersonId: string;
     }>;
     update(req: any, id: string, dto: UpdateCaseDto): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
-        createdAt: Date;
         updatedAt: Date;
-        organizationId: string;
-        clientPersonId: string;
     }>;
     close(req: any, id: string): Promise<{
         id: string;
+        createdAt: Date;
+        organizationId: string;
+        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
-        createdAt: Date;
         updatedAt: Date;
-        organizationId: string;
-        clientPersonId: string;
     }>;
 }

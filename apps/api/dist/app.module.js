@@ -14,6 +14,8 @@ const auth_module_1 = require("./auth/auth.module");
 const audit_module_1 = require("./audit/audit.module");
 const people_module_1 = require("./people/people.module");
 const cases_module_1 = require("./cases/cases.module");
+const documents_module_1 = require("./documents/documents.module");
+const jobs_module_1 = require("./jobs/jobs.module");
 const health_controller_1 = require("./health.controller");
 let AppModule = class AppModule {
 };
@@ -27,6 +29,8 @@ exports.AppModule = AppModule = __decorate([
             audit_module_1.AuditModule,
             people_module_1.PeopleModule,
             cases_module_1.CasesModule,
+            documents_module_1.DocumentsModule,
+            jobs_module_1.JobsModule,
         ],
         controllers: [health_controller_1.HealthController]
     })

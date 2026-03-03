@@ -5,6 +5,8 @@ import { AuthModule } from "./auth/auth.module";
 import { AuditModule } from "./audit/audit.module";
 import { PeopleModule } from "./people/people.module";
 import { CasesModule } from "./cases/cases.module";
+import { DocumentsModule } from "./documents/documents.module";
+import { JobsModule } from "./jobs/jobs.module";
 import { HealthController } from "./health.controller";
 
 @Module({
@@ -15,6 +17,8 @@ import { HealthController } from "./health.controller";
     AuditModule,
     PeopleModule,
     CasesModule,
+    DocumentsModule,
+    JobsModule,
   ],
   controllers: [HealthController]
 })
