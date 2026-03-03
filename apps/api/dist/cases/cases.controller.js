@@ -16,10 +16,12 @@ exports.CasesController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/auth.guard");
 const cases_service_1 = require("./cases.service");
+const readiness_service_1 = require("./readiness.service");
 const dto_1 = require("./dto");
 let CasesController = class CasesController {
-    constructor(cases) {
+    constructor(cases, readiness) {
         this.cases = cases;
+        this.readiness = readiness;
     }
     create(req, dto) {
         return this.cases.create(req.user.organizationId, req.user, dto);
@@ -32,6 +34,9 @@ let CasesController = class CasesController {
     }
     update(req, id, dto) {
         return this.cases.update(req.user.organizationId, req.user, id, dto);
+    }
+    readinessForCase(req, id) {
+        return this.readiness.getCaseReadiness(req.user.organizationId, id);
     }
     close(req, id) {
         return this.cases.close(req.user.organizationId, req.user, id);
@@ -73,6 +78,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CasesController.prototype, "update", null);
 __decorate([
+    (0, common_1.Get)(":id/readiness"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "readinessForCase", null);
+__decorate([
     (0, common_1.Post)(":id/close"),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)("id")),
@@ -83,6 +96,6 @@ __decorate([
 exports.CasesController = CasesController = __decorate([
     (0, common_1.Controller)("cases"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
-    __metadata("design:paramtypes", [cases_service_1.CasesService])
+    __metadata("design:paramtypes", [cases_service_1.CasesService, readiness_service_1.ReadinessService])
 ], CasesController);
 //# sourceMappingURL=cases.controller.js.map

@@ -191,6 +191,50 @@ let VerificationsService = class VerificationsService {
         await this.ensureAutoTasksForVerification(updated);
         return updated;
     }
+    async completeFromEvidence(organizationId, actor, id) {
+        const v = await this.prisma.verification.findFirst({ where: { id, organizationId } });
+        if (!v)
+            throw new common_1.NotFoundException("Verification not found");
+        if (!v.evidenceDocumentId) {
+            throw new common_1.BadRequestException("No evidenceDocumentId linked to this verification.");
+        }
+        const doc = await this.prisma.document.findFirst({
+            where: { id: v.evidenceDocumentId, organizationId }
+        });
+        if (!doc)
+            throw new common_1.BadRequestException("Evidence document not found.");
+        const verifiedAt = doc.issueDate ?? new Date();
+        const nextDueAt = doc.expiresAt ??
+            (0, rules_1.computeDefaultNextDueAt)(v.type, verifiedAt) ??
+            null;
+        const updated = await this.prisma.verification.update({
+            where: { id },
+            data: {
+                status: client_1.VerificationStatus.PASSED,
+                verifiedAt,
+                verifiedByUserId: actor.userId,
+                nextDueAt: nextDueAt ?? undefined,
+                notes: v.notes
+                    ? `${v.notes}\nCompleted from evidence document: ${doc.fileName}`
+                    : `Completed from evidence document: ${doc.fileName}`
+            }
+        });
+        await this.audit.write({
+            organizationId,
+            actorUserId: actor.userId,
+            actorClerkUserId: actor.clerkUserId,
+            action: "VERIFICATION_COMPLETED_FROM_EVIDENCE",
+            entityType: "Verification",
+            entityId: id,
+            diffJson: {
+                evidenceDocumentId: v.evidenceDocumentId,
+                verifiedAt: updated.verifiedAt?.toISOString(),
+                nextDueAt: updated.nextDueAt?.toISOString()
+            }
+        });
+        await this.ensureAutoTasksForVerification(updated);
+        return updated;
+    }
 };
 exports.VerificationsService = VerificationsService;
 exports.VerificationsService = VerificationsService = __decorate([

@@ -142,29 +142,31 @@ let DocumentsService = class DocumentsService {
                 }
             });
             if (!existing) {
-                const baseDate = doc.issueDate ?? new Date();
+                const verifiedAt = doc.issueDate ?? new Date();
                 const nextDueAt = doc.expiresAt ??
-                    (0, rules_1.computeDefaultNextDueAt)(vType, baseDate) ??
+                    (0, rules_1.computeDefaultNextDueAt)(vType, verifiedAt) ??
                     undefined;
                 const v = await this.prisma.verification.create({
                     data: {
                         organizationId,
                         caseId: doc.caseId,
                         type: vType,
-                        status: client_1.VerificationStatus.PENDING,
+                        status: client_1.VerificationStatus.PASSED,
+                        verifiedAt,
                         nextDueAt,
-                        notes: `Auto-created from uploaded document: ${doc.fileName}`,
-                        evidenceDocumentId: doc.id
+                        notes: `Auto-PASSED from uploaded evidence document: ${doc.fileName}`,
+                        evidenceDocumentId: doc.id,
+                        verifiedByUserId: actor.userId
                     }
                 });
                 await this.audit.write({
                     organizationId,
                     actorUserId: actor.userId,
                     actorClerkUserId: actor.clerkUserId,
-                    action: "VERIFICATION_AUTO_CREATED_FROM_DOCUMENT",
+                    action: "VERIFICATION_AUTO_PASSED_FROM_DOCUMENT",
                     entityType: "Verification",
                     entityId: v.id,
-                    diffJson: { documentId: doc.id, type: v.type }
+                    diffJson: { documentId: doc.id, type: v.type, verifiedAt: v.verifiedAt?.toISOString() }
                 });
             }
         }

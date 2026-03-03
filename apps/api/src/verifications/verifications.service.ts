@@ -222,4 +222,55 @@ export class VerificationsService {
 
     return updated;
   }
+
+  async completeFromEvidence(organizationId: string, actor: any, id: string) {
+    const v = await this.prisma.verification.findFirst({ where: { id, organizationId } });
+    if (!v) throw new NotFoundException("Verification not found");
+
+    if (!v.evidenceDocumentId) {
+      throw new BadRequestException("No evidenceDocumentId linked to this verification.");
+    }
+
+    const doc = await this.prisma.document.findFirst({
+      where: { id: v.evidenceDocumentId, organizationId }
+    });
+    if (!doc) throw new BadRequestException("Evidence document not found.");
+
+    const verifiedAt = doc.issueDate ?? new Date();
+    const nextDueAt =
+      doc.expiresAt ??
+      computeDefaultNextDueAt(v.type, verifiedAt) ??
+      null;
+
+    const updated = await this.prisma.verification.update({
+      where: { id },
+      data: {
+        status: VerificationStatus.PASSED,
+        verifiedAt,
+        verifiedByUserId: actor.userId,
+        nextDueAt: nextDueAt ?? undefined,
+        notes: v.notes
+          ? `${v.notes}\nCompleted from evidence document: ${doc.fileName}` 
+          : `Completed from evidence document: ${doc.fileName}` 
+      }
+    });
+
+    await this.audit.write({
+      organizationId,
+      actorUserId: actor.userId,
+      actorClerkUserId: actor.clerkUserId,
+      action: "VERIFICATION_COMPLETED_FROM_EVIDENCE",
+      entityType: "Verification",
+      entityId: id,
+      diffJson: {
+        evidenceDocumentId: v.evidenceDocumentId,
+        verifiedAt: updated.verifiedAt?.toISOString(),
+        nextDueAt: updated.nextDueAt?.toISOString()
+      }
+    });
+
+    await this.ensureAutoTasksForVerification(updated);
+
+    return updated;
+  }
 }

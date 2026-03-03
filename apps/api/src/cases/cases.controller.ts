@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../auth/auth.guard";
 import { CasesService } from "./cases.service";
+import { ReadinessService } from "./readiness.service";
 import { CreateCaseDto, UpdateCaseDto } from "./dto";
 
 @Controller("cases")
 @UseGuards(AuthGuard)
 export class CasesController {
-  constructor(private cases: CasesService) {}
+  constructor(private cases: CasesService, private readiness: ReadinessService) {}
 
   @Post()
   create(@Req() req: any, @Body() dto: CreateCaseDto) {
@@ -26,6 +27,11 @@ export class CasesController {
   @Patch(":id")
   update(@Req() req: any, @Param("id") id: string, @Body() dto: UpdateCaseDto) {
     return this.cases.update(req.user.organizationId, req.user, id, dto);
+  }
+
+  @Get(":id/readiness")
+  readinessForCase(@Req() req: any, @Param("id") id: string) {
+    return this.readiness.getCaseReadiness(req.user.organizationId, id);
   }
 
   @Post(":id/close")

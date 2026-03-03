@@ -30,6 +30,9 @@ let VerificationsController = class VerificationsController {
     update(req, id, dto) {
         return this.verifs.update(req.user.organizationId, req.user, id, dto);
     }
+    completeFromEvidence(req, id) {
+        return this.verifs.completeFromEvidence(req.user.organizationId, req.user, id);
+    }
 };
 exports.VerificationsController = VerificationsController;
 __decorate([
@@ -58,6 +61,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, dto_1.UpdateVerificationDto]),
     __metadata("design:returntype", void 0)
 ], VerificationsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Post)("verifications/:id/complete-from-evidence"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], VerificationsController.prototype, "completeFromEvidence", null);
 exports.VerificationsController = VerificationsController = __decorate([
     (0, common_1.Controller)(),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

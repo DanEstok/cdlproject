@@ -50,4 +50,18 @@ export declare class VerificationsService {
         organizationId: string;
         caseId: string;
     }>;
+    completeFromEvidence(organizationId: string, actor: any, id: string): Promise<{
+        id: string;
+        type: import("@prisma/client").$Enums.VerificationType;
+        status: import("@prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date | null;
+        nextDueAt: Date | null;
+        verifiedByUserId: string | null;
+        notes: string | null;
+        evidenceDocumentId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        organizationId: string;
+        caseId: string;
+    }>;
 }

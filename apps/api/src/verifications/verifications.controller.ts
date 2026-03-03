@@ -22,4 +22,9 @@ export class VerificationsController {
   update(@Req() req: any, @Param("id") id: string, @Body() dto: UpdateVerificationDto) {
     return this.verifs.update(req.user.organizationId, req.user, id, dto);
   }
+
+  @Post("verifications/:id/complete-from-evidence")
+  completeFromEvidence(@Req() req: any, @Param("id") id: string) {
+    return this.verifs.completeFromEvidence(req.user.organizationId, req.user, id);
+  }
 }

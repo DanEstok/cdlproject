@@ -45,4 +45,18 @@ export declare class VerificationsController {
         organizationId: string;
         caseId: string;
     }>;
+    completeFromEvidence(req: any, id: string): Promise<{
+        id: string;
+        type: import("@prisma/client").$Enums.VerificationType;
+        status: import("@prisma/client").$Enums.VerificationStatus;
+        verifiedAt: Date | null;
+        nextDueAt: Date | null;
+        verifiedByUserId: string | null;
+        notes: string | null;
+        evidenceDocumentId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        organizationId: string;
+        caseId: string;
+    }>;
 }

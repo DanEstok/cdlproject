@@ -13,6 +13,7 @@ const auth_module_1 = require("../auth/auth.module");
 const audit_module_1 = require("../audit/audit.module");
 const cases_controller_1 = require("./cases.controller");
 const cases_service_1 = require("./cases.service");
+const readiness_service_1 = require("./readiness.service");
 let CasesModule = class CasesModule {
 };
 exports.CasesModule = CasesModule;
@@ -20,7 +21,8 @@ exports.CasesModule = CasesModule = __decorate([
     (0, common_1.Module)({
         imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule, audit_module_1.AuditModule],
         controllers: [cases_controller_1.CasesController],
-        providers: [cases_service_1.CasesService]
+        providers: [cases_service_1.CasesService, readiness_service_1.ReadinessService],
+        exports: [cases_service_1.CasesService, readiness_service_1.ReadinessService],
     })
 ], CasesModule);
 //# sourceMappingURL=cases.module.js.map

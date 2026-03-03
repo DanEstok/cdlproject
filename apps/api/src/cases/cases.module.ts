@@ -4,10 +4,12 @@ import { AuthModule } from "../auth/auth.module";
 import { AuditModule } from "../audit/audit.module";
 import { CasesController } from "./cases.controller";
 import { CasesService } from "./cases.service";
+import { ReadinessService } from "./readiness.service";
 
 @Module({
   imports: [PrismaModule, AuthModule, AuditModule],
   controllers: [CasesController],
-  providers: [CasesService]
+  providers: [CasesService, ReadinessService],
+  exports: [CasesService, ReadinessService],
 })
 export class CasesModule {}

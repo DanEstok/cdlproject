@@ -148,7 +148,6 @@ export class DocumentsService {
 
     const vType = docTypeToVerification[dto.docType];
     if (vType && doc.caseId) {
-      // avoid duplicates for the same evidence doc
       const existing = await this.prisma.verification.findFirst({
         where: {
           organizationId,
@@ -159,10 +158,13 @@ export class DocumentsService {
       });
 
       if (!existing) {
-        const baseDate = doc.issueDate ?? new Date();
+        // Smart parsing:
+        // - verifiedAt = issueDate if present else now
+        // - nextDueAt = expiresAt if present else default interval
+        const verifiedAt = doc.issueDate ?? new Date();
         const nextDueAt =
           doc.expiresAt ??
-          computeDefaultNextDueAt(vType, baseDate) ??
+          computeDefaultNextDueAt(vType, verifiedAt) ??
           undefined;
 
         const v = await this.prisma.verification.create({
@@ -170,10 +172,12 @@ export class DocumentsService {
             organizationId,
             caseId: doc.caseId,
             type: vType,
-            status: VerificationStatus.PENDING,
+            status: VerificationStatus.PASSED,
+            verifiedAt,
             nextDueAt,
-            notes: `Auto-created from uploaded document: ${doc.fileName}`,
-            evidenceDocumentId: doc.id
+            notes: `Auto-PASSED from uploaded evidence document: ${doc.fileName}`,
+            evidenceDocumentId: doc.id,
+            verifiedByUserId: actor.userId
           }
         });
 
@@ -181,10 +185,10 @@ export class DocumentsService {
           organizationId,
           actorUserId: actor.userId,
           actorClerkUserId: actor.clerkUserId,
-          action: "VERIFICATION_AUTO_CREATED_FROM_DOCUMENT",
+          action: "VERIFICATION_AUTO_PASSED_FROM_DOCUMENT",
           entityType: "Verification",
           entityId: v.id,
-          diffJson: { documentId: doc.id, type: v.type }
+          diffJson: { documentId: doc.id, type: v.type, verifiedAt: v.verifiedAt?.toISOString() }
         });
       }
     }

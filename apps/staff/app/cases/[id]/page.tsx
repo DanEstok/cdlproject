@@ -54,6 +54,13 @@ type TimelineItem = {
   refId: string;
 };
 
+type Readiness = {
+  percent: number;
+  done: number;
+  total: number;
+  items: { key: string; label: string; ok: boolean }[];
+};
+
 export default async function CasePage({ params }: { params: { id: string } }) {
   await ensureProvisioned();
 
@@ -63,6 +70,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const docs = await apiFetch<Document[]>(`/documents?caseId=${params.id}`);
   const verifs = await apiFetch<Verification[]>(`/cases/${params.id}/verifications`);
   const timeline = await apiFetch<TimelineItem[]>(`/cases/${params.id}/timeline`);
+  const readiness = await apiFetch<Readiness>(`/cases/${params.id}/readiness`);
 
   // For uploader (client-side), we need an actual token for browser calls
   const session = await auth();
@@ -87,6 +95,20 @@ export default async function CasePage({ params }: { params: { id: string } }) {
       <div style={{ marginTop: 8 }}>
         <strong>Status:</strong> {c.status}
       </div>
+
+      <section style={{ marginTop: 20, border: "1px solid #ddd", padding: 12 }}>
+        <h3 style={{ marginTop: 0 }}>Readiness</h3>
+        <div style={{ fontSize: 18 }}>
+          <strong>{readiness.percent}%</strong> ({readiness.done}/{readiness.total})
+        </div>
+        <ul style={{ marginTop: 10 }}>
+          {readiness.items.map((i) => (
+            <li key={i.key} style={{ opacity: i.ok ? 1 : 0.6 }}>
+              {i.ok ? "✅" : "⬜"} {i.label}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* TIMELINE */}
       <section style={{ marginTop: 20 }}>
@@ -192,12 +214,25 @@ export default async function CasePage({ params }: { params: { id: string } }) {
                     {v.nextDueAt ? ` | Next due: ${new Date(v.nextDueAt).toLocaleString()}` : ""}
                   </div>
                   {v.notes ? <div style={{ marginTop: 6, fontSize: 13 }}>{v.notes}</div> : null}
-                  {v.evidenceDocumentId ? (
-                    <div style={{ marginTop: 6, fontSize: 13 }}>
-                      Evidence:{" "}
+                  
+                  <div style={{ marginTop: 10, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                    <form action={`/verifications/${v.id}/evidence`} method="post" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                      <select name="evidenceDocumentId" defaultValue={v.evidenceDocumentId || ""}>
+                        <option value="">No evidence</option>
+                        {docs.map((d) => (
+                          <option key={d.id} value={d.id}>
+                            {d.docType}: {d.fileName}
+                          </option>
+                        ))}
+                      </select>
+
+                      <button type="submit">Save Evidence</button>
+                    </form>
+
+                    {v.evidenceDocumentId ? (
                       <a href={`/documents/${v.evidenceDocumentId}/download`}>View evidence</a>
-                    </div>
-                  ) : null}
+                    ) : null}
+                  </div>
                 </div>
 
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -212,6 +247,11 @@ export default async function CasePage({ params }: { params: { id: string } }) {
                   <form action={`/verifications/${v.id}/set`} method="post">
                     <input type="hidden" name="status" value="PENDING" />
                     <button type="submit">PENDING</button>
+                  </form>
+                  <form action={`/verifications/${v.id}/complete-from-evidence`} method="post">
+                    <button type="submit" disabled={!v.evidenceDocumentId}>
+                      Complete from evidence
+                    </button>
                   </form>
                 </div>
               </div>

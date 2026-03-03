@@ -164,6 +164,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/verifications/[id]/complete-from-evidence/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/verifications/[id]/complete-from-evidence">> = Specific
+  const handler = {} as typeof import("../../app/verifications/[id]/complete-from-evidence/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/verifications/[id]/evidence/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/verifications/[id]/evidence">> = Specific
