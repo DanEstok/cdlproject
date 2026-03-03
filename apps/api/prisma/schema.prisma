@@ -369,3 +369,18 @@ model ReadinessRequirement {
   @@index([organizationId, programKey])
   @@index([organizationId, programKey, kind])
 }
+
+model ProgramConfig {
+  id             String   @id @default(cuid())
+  organizationId String
+  programKey     String
+  displayName    String
+  description    String?  @db.Text
+  enabled        Boolean  @default(true)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([organizationId, programKey])
+  @@index([organizationId])
+}
