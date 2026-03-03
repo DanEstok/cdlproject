@@ -55,10 +55,12 @@ type TimelineItem = {
 };
 
 type Readiness = {
+  caseId: string;
+  programKey: string;
   percent: number;
-  done: number;
-  total: number;
-  items: { key: string; label: string; ok: boolean }[];
+  doneWeight: number;
+  totalWeight: number;
+  items: { id: string; key: string; label: string; kind: string; weight: number; ok: boolean }[];
 };
 
 export default async function CasePage({ params }: { params: { id: string } }) {
@@ -71,6 +73,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const verifs = await apiFetch<Verification[]>(`/cases/${params.id}/verifications`);
   const timeline = await apiFetch<TimelineItem[]>(`/cases/${params.id}/timeline`);
   const readiness = await apiFetch<Readiness>(`/cases/${params.id}/readiness`);
+  const programs = await apiFetch<{ programKeys: string[] }>(`/readiness/programs`);
 
   // For uploader (client-side), we need an actual token for browser calls
   const session = await auth();
@@ -99,7 +102,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
       <section style={{ marginTop: 20, border: "1px solid #ddd", padding: 12 }}>
         <h3 style={{ marginTop: 0 }}>Readiness</h3>
         <div style={{ fontSize: 18 }}>
-          <strong>{readiness.percent}%</strong> ({readiness.done}/{readiness.total})
+          <strong>{readiness.percent}%</strong> ({readiness.doneWeight}/{readiness.totalWeight})
         </div>
         <ul style={{ marginTop: 10 }}>
           {readiness.items.map((i) => (
@@ -108,6 +111,25 @@ export default async function CasePage({ params }: { params: { id: string } }) {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section style={{ marginTop: 16, border: "1px solid #ddd", padding: 12 }}>
+        <h3 style={{ marginTop: 0 }}>Program</h3>
+
+        <form action={`/cases/${params.id}/program/set`} method="post" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+          <select name="programKey" defaultValue={readiness.programKey}>
+            {programs.programKeys.map((k) => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+          <button type="submit">Set Program</button>
+        </form>
+
+        <div style={{ marginTop: 8, fontSize: 13, opacity: 0.85 }}>
+          Readiness checklist and scoring update based on the selected program.
+        </div>
       </section>
 
       {/* TIMELINE */}

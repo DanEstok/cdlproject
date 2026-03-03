@@ -38,6 +38,9 @@ let CasesController = class CasesController {
     readinessForCase(req, id) {
         return this.readiness.getCaseReadiness(req.user.organizationId, id);
     }
+    setProgram(req, id, body) {
+        return this.cases.setProgram(req.user.organizationId, id, body.programKey);
+    }
     close(req, id) {
         return this.cases.close(req.user.organizationId, req.user, id);
     }
@@ -85,6 +88,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], CasesController.prototype, "readinessForCase", null);
+__decorate([
+    (0, common_1.Patch)(":id/program"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "setProgram", null);
 __decorate([
     (0, common_1.Post)(":id/close"),
     __param(0, (0, common_1.Req)()),

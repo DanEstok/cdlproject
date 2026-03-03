@@ -47,6 +47,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 }
 
 
+// Validate ../../app/admin/readiness/[programKey]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/admin/readiness/[programKey]">> = Specific
+  const handler = {} as typeof import("../../app/admin/readiness/[programKey]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/admin/readiness/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/admin/readiness">> = Specific
+  const handler = {} as typeof import("../../app/admin/readiness/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/cases/[id]/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/cases/[id]">> = Specific
@@ -92,10 +110,28 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/admin/readiness/[programKey]/save/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/admin/readiness/[programKey]/save">> = Specific
+  const handler = {} as typeof import("../../app/admin/readiness/[programKey]/save/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/cases/[id]/notes/create/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/cases/[id]/notes/create">> = Specific
   const handler = {} as typeof import("../../app/cases/[id]/notes/create/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/cases/[id]/program/set/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/cases/[id]/program/set">> = Specific
+  const handler = {} as typeof import("../../app/cases/[id]/program/set/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

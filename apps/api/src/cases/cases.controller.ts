@@ -34,6 +34,11 @@ export class CasesController {
     return this.readiness.getCaseReadiness(req.user.organizationId, id);
   }
 
+  @Patch(":id/program")
+  setProgram(@Req() req: any, @Param("id") id: string, @Body() body: { programKey: string }) {
+    return this.cases.setProgram(req.user.organizationId, id, body.programKey);
+  }
+
   @Post(":id/close")
   close(@Req() req: any, @Param("id") id: string) {
     return this.cases.close(req.user.organizationId, req.user, id);

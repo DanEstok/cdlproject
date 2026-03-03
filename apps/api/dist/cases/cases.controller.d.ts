@@ -135,6 +135,21 @@ export declare class CasesController {
             ok: boolean;
         }[];
     }>;
+    setProgram(req: any, id: string, body: {
+        programKey: string;
+    }): Promise<{
+        id: string;
+        status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
+        openedAt: Date;
+        closedAt: Date | null;
+        notes: string | null;
+        primaryCaseManagerUserId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
+    }>;
     close(req: any, id: string): Promise<{
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
