@@ -12,6 +12,7 @@ import { VerificationsModule } from "./verifications/verifications.module";
 import { TimelineModule } from "./timeline/timeline.module";
 import { JobsModule } from "./jobs/jobs.module";
 import { ReadinessConfigModule } from "./readiness-config/readiness-config.module";
+import { ProgramsModule } from "./programs/programs.module";
 import { HealthController } from "./health.controller";
 
 @Module({
@@ -29,6 +30,7 @@ import { HealthController } from "./health.controller";
     TimelineModule,
     JobsModule,
     ReadinessConfigModule,
+    ProgramsModule,
   ],
   controllers: [HealthController]
 })

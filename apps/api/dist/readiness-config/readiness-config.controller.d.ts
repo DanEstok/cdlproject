@@ -12,6 +12,8 @@ export declare class ReadinessConfigController {
     getReqs(req: any, programKey: string): Promise<{
         id: string;
         organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
         programKey: string;
         kind: import("@prisma/client").$Enums.ReadinessRequirementKind;
         label: string;
@@ -19,8 +21,6 @@ export declare class ReadinessConfigController {
         enabled: boolean;
         docType: string | null;
         verificationType: string | null;
-        createdAt: Date;
-        updatedAt: Date;
     }[]>;
     replaceReqs(req: any, programKey: string, body: {
         items: any[];

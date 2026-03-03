@@ -25,6 +25,7 @@ export declare class DocumentsService {
         id: string;
         organizationId: string;
         createdAt: Date;
+        docType: import("@prisma/client").$Enums.DocumentType;
         caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
@@ -33,7 +34,6 @@ export declare class DocumentsService {
         mimeType: string;
         storageKey: string;
         sizeBytes: number;
-        docType: import("@prisma/client").$Enums.DocumentType;
         issueDate: Date | null;
         expiresAt: Date | null;
     }>;
@@ -44,6 +44,7 @@ export declare class DocumentsService {
         id: string;
         organizationId: string;
         createdAt: Date;
+        docType: import("@prisma/client").$Enums.DocumentType;
         caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
@@ -52,7 +53,6 @@ export declare class DocumentsService {
         mimeType: string;
         storageKey: string;
         sizeBytes: number;
-        docType: import("@prisma/client").$Enums.DocumentType;
         issueDate: Date | null;
         expiresAt: Date | null;
     }[]>;
