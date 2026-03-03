@@ -30,6 +30,9 @@ let DocumentsController = class DocumentsController {
     list(req, caseId, personId) {
         return this.docs.list(req.user.organizationId, { caseId, personId });
     }
+    presignDownload(req, body) {
+        return this.docs.presignDownload(req.user.organizationId, req.user, body.documentId);
+    }
 };
 exports.DocumentsController = DocumentsController;
 __decorate([
@@ -57,6 +60,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", void 0)
 ], DocumentsController.prototype, "list", null);
+__decorate([
+    (0, common_1.Post)("presign-download"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], DocumentsController.prototype, "presignDownload", null);
 exports.DocumentsController = DocumentsController = __decorate([
     (0, common_1.Controller)("documents"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

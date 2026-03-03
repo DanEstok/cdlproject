@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,16 +16,63 @@ exports.JobsService = void 0;
 const common_1 = require("@nestjs/common");
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
+const prisma_service_1 = require("../prisma/prisma.service");
 let JobsService = class JobsService {
-    constructor() {
+    constructor(prisma) {
+        this.prisma = prisma;
         this.connection = new ioredis_1.default(process.env.REDIS_URL || "redis://localhost:6379");
-        this.taskQueue = new bullmq_1.Queue("tasks", { connection: this.connection });
+        this.queue = new bullmq_1.Queue("system", { connection: this.connection });
     }
     async onModuleInit() {
+        await this.queue.add("document-expiry-scan", {}, { repeat: { pattern: "15 3 * * *" }, removeOnComplete: true, removeOnFail: true });
+        const worker = new bullmq_1.Worker("system", async (job) => {
+            if (job.name === "document-expiry-scan") {
+                await this.runDocumentExpiryScan();
+            }
+        }, { connection: this.connection });
+    }
+    async runDocumentExpiryScan() {
+        const now = new Date();
+        const in30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const docs = await this.prisma.document.findMany({
+            where: {
+                expiresAt: { gte: now, lte: in30 }
+            },
+            take: 500,
+            orderBy: { expiresAt: "asc" }
+        });
+        for (const d of docs) {
+            if (!d.caseId)
+                continue;
+            const title = `Renew document: ${d.docType}`;
+            const marker = `documentId=${d.id}`;
+            const existing = await this.prisma.task.findFirst({
+                where: {
+                    organizationId: d.organizationId,
+                    caseId: d.caseId,
+                    title,
+                    description: { contains: marker }
+                }
+            });
+            if (existing)
+                continue;
+            const dueAt = d.expiresAt ?? in30;
+            await this.prisma.task.create({
+                data: {
+                    organizationId: d.organizationId,
+                    caseId: d.caseId,
+                    title,
+                    description: `Auto-generated. ${marker}. File: ${d.fileName}. Expires at: ${d.expiresAt?.toISOString()}`,
+                    status: "TODO",
+                    dueAt
+                }
+            });
+        }
     }
 };
 exports.JobsService = JobsService;
 exports.JobsService = JobsService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], JobsService);
 //# sourceMappingURL=jobs.service.js.map

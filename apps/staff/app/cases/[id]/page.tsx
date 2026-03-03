@@ -34,6 +34,17 @@ type Document = {
   expiresAt?: string | null;
 };
 
+type Verification = {
+  id: string;
+  type: string;
+  status: string;
+  nextDueAt?: string | null;
+  verifiedAt?: string | null;
+  notes?: string | null;
+  evidenceDocumentId?: string | null;
+  createdAt: string;
+};
+
 export default async function CasePage({ params }: { params: { id: string } }) {
   await ensureProvisioned();
 
@@ -41,6 +52,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const tasks = await apiFetch<Task[]>(`/cases/${params.id}/tasks`);
   const notes = await apiFetch<Note[]>(`/cases/${params.id}/notes`);
   const docs = await apiFetch<Document[]>(`/documents?caseId=${params.id}`);
+  const verifs = await apiFetch<Verification[]>(`/cases/${params.id}/verifications`);
 
   // For uploader (client-side), we need an actual token for browser calls
   const session = await auth();
@@ -82,6 +94,67 @@ export default async function CasePage({ params }: { params: { id: string } }) {
                     {d.issueDate ? ` | Issue: ${new Date(d.issueDate).toLocaleDateString()}` : ""}
                     {d.expiresAt ? ` | Expires: ${new Date(d.expiresAt).toLocaleDateString()}` : ""}
                   </div>
+                </div>
+                <div>
+                  <a href={`/documents/${d.id}/download`}>Download</a>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* VERIFICATIONS */}
+      <section style={{ marginTop: 28 }}>
+        <h3>Verifications</h3>
+
+        <form action={`/cases/${params.id}/verifications/create`} method="post" style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+          <select name="type" defaultValue="DOT_MEDICAL">
+            <option value="DOT_MEDICAL">DOT_MEDICAL</option>
+            <option value="MVR">MVR</option>
+            <option value="CLEARINGHOUSE">CLEARINGHOUSE</option>
+          </select>
+
+          <select name="status" defaultValue="PENDING">
+            <option value="PENDING">PENDING</option>
+            <option value="PASSED">PASSED</option>
+            <option value="FAILED">FAILED</option>
+            <option value="UNKNOWN">UNKNOWN</option>
+          </select>
+
+          <input name="nextDueAt" placeholder="Next due ISO (optional)" />
+          <input name="notes" placeholder="Notes (optional)" />
+
+          <button type="submit">Add Verification</button>
+        </form>
+
+        <ul style={{ marginTop: 12 }}>
+          {verifs.map((v) => (
+            <li key={v.id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <strong>{v.type}</strong> | {v.status}
+                  <div style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>
+                    Created: {new Date(v.createdAt).toLocaleString()}
+                    {v.verifiedAt ? ` | Verified: ${new Date(v.verifiedAt).toLocaleString()}` : ""}
+                    {v.nextDueAt ? ` | Next due: ${new Date(v.nextDueAt).toLocaleString()}` : ""}
+                  </div>
+                  {v.notes ? <div style={{ marginTop: 6, fontSize: 13 }}>{v.notes}</div> : null}
+                </div>
+
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <form action={`/verifications/${v.id}/set`} method="post">
+                    <input type="hidden" name="status" value="PASSED" />
+                    <button type="submit">PASS</button>
+                  </form>
+                  <form action={`/verifications/${v.id}/set`} method="post">
+                    <input type="hidden" name="status" value="FAILED" />
+                    <button type="submit">FAIL</button>
+                  </form>
+                  <form action={`/verifications/${v.id}/set`} method="post">
+                    <input type="hidden" name="status" value="PENDING" />
+                    <button type="submit">PENDING</button>
+                  </form>
                 </div>
               </div>
             </li>

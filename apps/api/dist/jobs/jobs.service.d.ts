@@ -1,7 +1,10 @@
 import { OnModuleInit } from "@nestjs/common";
-import { Queue } from "bullmq";
+import { PrismaService } from "../prisma/prisma.service";
 export declare class JobsService implements OnModuleInit {
+    private prisma;
     private connection;
-    taskQueue: Queue<any, any, string>;
+    private queue;
+    constructor(prisma: PrismaService);
     onModuleInit(): Promise<void>;
+    private runDocumentExpiryScan;
 }

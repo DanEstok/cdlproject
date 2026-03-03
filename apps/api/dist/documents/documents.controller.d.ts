@@ -39,4 +39,9 @@ export declare class DocumentsController {
         organizationId: string;
         caseId: string | null;
     }[]>;
+    presignDownload(req: any, body: {
+        documentId: string;
+    }): Promise<{
+        downloadUrl: string;
+    }>;
 }

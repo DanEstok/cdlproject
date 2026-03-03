@@ -22,4 +22,9 @@ export class DocumentsController {
   list(@Req() req: any, @Query("caseId") caseId?: string, @Query("personId") personId?: string) {
     return this.docs.list(req.user.organizationId, { caseId, personId });
   }
+
+  @Post("presign-download")
+  presignDownload(@Req() req: any, @Body() body: { documentId: string }) {
+    return this.docs.presignDownload(req.user.organizationId, req.user, body.documentId);
+  }
 }

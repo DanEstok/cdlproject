@@ -1,3 +1,5 @@
 {
+  "/documents/[id]/download/route": "app/documents/[id]/download/route.js",
+  "/page": "app/page.js",
   "/cases/new/page": "app/cases/new/page.js"
 }

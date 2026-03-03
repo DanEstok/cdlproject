@@ -17,6 +17,7 @@ const cases_module_1 = require("./cases/cases.module");
 const documents_module_1 = require("./documents/documents.module");
 const tasks_module_1 = require("./tasks/tasks.module");
 const notes_module_1 = require("./notes/notes.module");
+const verifications_module_1 = require("./verifications/verifications.module");
 const jobs_module_1 = require("./jobs/jobs.module");
 const health_controller_1 = require("./health.controller");
 let AppModule = class AppModule {
@@ -34,6 +35,7 @@ exports.AppModule = AppModule = __decorate([
             documents_module_1.DocumentsModule,
             tasks_module_1.TasksModule,
             notes_module_1.NotesModule,
+            verifications_module_1.VerificationsModule,
             jobs_module_1.JobsModule,
         ],
         controllers: [health_controller_1.HealthController]

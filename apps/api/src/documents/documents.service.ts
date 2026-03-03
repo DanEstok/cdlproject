@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, BadRequestException, ForbiddenException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuid } from "uuid";
 import { CompleteDocumentDto, PresignDocumentDto } from "./dto";
@@ -38,8 +38,39 @@ export class DocumentsService {
     return { storageKey, uploadUrl };
   }
 
+  async presignDownload(
+    organizationId: string,
+    actor: { userId: string; clerkUserId: string },
+    documentId: string
+  ) {
+    if (!this.bucket) throw new BadRequestException("S3_BUCKET not configured");
+
+    const doc = await this.prisma.document.findFirst({
+      where: { id: documentId, organizationId }
+    });
+    if (!doc) throw new ForbiddenException("Document not found");
+
+    const cmd = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: doc.storageKey,
+      ResponseContentDisposition: `attachment; filename="${doc.fileName}"` 
+    });
+
+    const downloadUrl = await getSignedUrl(this.s3, cmd, { expiresIn: 60 * 5 });
+
+    await this.audit.write({
+      organizationId,
+      actorUserId: actor.userId,
+      actorClerkUserId: actor.clerkUserId,
+      action: "DOCUMENT_DOWNLOAD_PRESIGNED",
+      entityType: "Document",
+      entityId: doc.id
+    });
+
+    return { downloadUrl };
+  }
+
   async complete(organizationId: string, actor: { userId: string; clerkUserId: string }, dto: CompleteDocumentDto) {
-    // Optional: validate caseId/personId belong to org
     if (dto.caseId) {
       const c = await this.prisma.case.findFirst({ where: { id: dto.caseId, organizationId } });
       if (!c) throw new BadRequestException("Invalid caseId");

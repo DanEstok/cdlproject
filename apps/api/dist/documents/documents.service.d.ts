@@ -11,11 +11,19 @@ export declare class DocumentsService {
         storageKey: string;
         uploadUrl: string;
     }>;
+    presignDownload(organizationId: string, actor: {
+        userId: string;
+        clerkUserId: string;
+    }, documentId: string): Promise<{
+        downloadUrl: string;
+    }>;
     complete(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, dto: CompleteDocumentDto): Promise<{
         id: string;
+        organizationId: string;
+        caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
         uploadedByPersonId: string | null;
@@ -27,14 +35,14 @@ export declare class DocumentsService {
         issueDate: Date | null;
         expiresAt: Date | null;
         createdAt: Date;
-        organizationId: string;
-        caseId: string | null;
     }>;
     list(organizationId: string, params: {
         caseId?: string;
         personId?: string;
     }): Promise<{
         id: string;
+        organizationId: string;
+        caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
         uploadedByPersonId: string | null;
@@ -46,7 +54,5 @@ export declare class DocumentsService {
         issueDate: Date | null;
         expiresAt: Date | null;
         createdAt: Date;
-        organizationId: string;
-        caseId: string | null;
     }[]>;
 }

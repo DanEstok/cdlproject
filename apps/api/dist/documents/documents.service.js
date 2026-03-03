@@ -43,6 +43,30 @@ let DocumentsService = class DocumentsService {
         const uploadUrl = await (0, s3_request_presigner_1.getSignedUrl)(this.s3, cmd, { expiresIn: 60 * 10 });
         return { storageKey, uploadUrl };
     }
+    async presignDownload(organizationId, actor, documentId) {
+        if (!this.bucket)
+            throw new common_1.BadRequestException("S3_BUCKET not configured");
+        const doc = await this.prisma.document.findFirst({
+            where: { id: documentId, organizationId }
+        });
+        if (!doc)
+            throw new common_1.ForbiddenException("Document not found");
+        const cmd = new client_s3_1.GetObjectCommand({
+            Bucket: this.bucket,
+            Key: doc.storageKey,
+            ResponseContentDisposition: `attachment; filename="${doc.fileName}"`
+        });
+        const downloadUrl = await (0, s3_request_presigner_1.getSignedUrl)(this.s3, cmd, { expiresIn: 60 * 5 });
+        await this.audit.write({
+            organizationId,
+            actorUserId: actor.userId,
+            actorClerkUserId: actor.clerkUserId,
+            action: "DOCUMENT_DOWNLOAD_PRESIGNED",
+            entityType: "Document",
+            entityId: doc.id
+        });
+        return { downloadUrl };
+    }
     async complete(organizationId, actor, dto) {
         if (dto.caseId) {
             const c = await this.prisma.case.findFirst({ where: { id: dto.caseId, organizationId } });
