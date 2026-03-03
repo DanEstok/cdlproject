@@ -1,5 +1,5 @@
-import { ensureProvisioned, apiFetch } from "../../../lib/api";
-import { RequirementsEditor } from "../../../components/RequirementsEditor";
+import { ensureProvisioned, apiFetch } from "../../../../lib/api";
+import { RequirementsEditor } from "../../../../components/RequirementsEditor";
 
 type Program = {
   programKey: string;

@@ -1,4 +1,4 @@
-import { ensureProvisioned, apiFetch } from "../../lib/api";
+import { ensureProvisioned, apiFetch } from "../../../lib/api";
 
 type Program = {
   programKey: string;
