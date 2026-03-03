@@ -9,39 +9,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const prisma_module_1 = require("./common/prisma/prisma.module");
+const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
-const people_module_1 = require("./modules/people/people.module");
-const cases_module_1 = require("./modules/cases/cases.module");
-const tasks_module_1 = require("./modules/tasks/tasks.module");
-const notes_module_1 = require("./modules/notes/notes.module");
-const documents_module_1 = require("./modules/documents/documents.module");
-const verifications_module_1 = require("./modules/verifications/verifications.module");
-const billing_module_1 = require("./modules/billing/billing.module");
-const audit_module_1 = require("./modules/audit/audit.module");
-const webhooks_module_1 = require("./modules/webhooks/webhooks.module");
+const audit_module_1 = require("./audit/audit.module");
+const people_module_1 = require("./people/people.module");
+const cases_module_1 = require("./cases/cases.module");
+const tasks_module_1 = require("./tasks/tasks.module");
+const notes_module_1 = require("./notes/notes.module");
+const documents_module_1 = require("./documents/documents.module");
+const jobs_module_1 = require("./jobs/jobs.module");
+const health_controller_1 = require("./health.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({
-                isGlobal: true,
-                envFilePath: ['.env.local', '.env'],
-            }),
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
+            audit_module_1.AuditModule,
             people_module_1.PeopleModule,
             cases_module_1.CasesModule,
             tasks_module_1.TasksModule,
             notes_module_1.NotesModule,
             documents_module_1.DocumentsModule,
-            verifications_module_1.VerificationsModule,
-            billing_module_1.BillingModule,
-            audit_module_1.AuditModule,
-            webhooks_module_1.WebhooksModule,
+            jobs_module_1.JobsModule
         ],
+        controllers: [health_controller_1.HealthController]
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

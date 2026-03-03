@@ -1,34 +1,29 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './common/prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
-import { PeopleModule } from './modules/people/people.module';
-import { CasesModule } from './modules/cases/cases.module';
-import { TasksModule } from './modules/tasks/tasks.module';
-import { NotesModule } from './modules/notes/notes.module';
-import { DocumentsModule } from './modules/documents/documents.module';
-import { VerificationsModule } from './modules/verifications/verifications.module';
-import { BillingModule } from './modules/billing/billing.module';
-import { AuditModule } from './modules/audit/audit.module';
-import { WebhooksModule } from './modules/webhooks/webhooks.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { PrismaModule } from "./prisma/prisma.module";
+import { AuthModule } from "./auth/auth.module";
+import { AuditModule } from "./audit/audit.module";
+import { PeopleModule } from "./people/people.module";
+import { CasesModule } from "./cases/cases.module";
+import { TasksModule } from "./tasks/tasks.module";
+import { NotesModule } from "./notes/notes.module";
+import { DocumentsModule } from "./documents/documents.module";
+import { JobsModule } from "./jobs/jobs.module";
+import { HealthController } from "./health.controller";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
+    AuditModule,
     PeopleModule,
     CasesModule,
     TasksModule,
     NotesModule,
     DocumentsModule,
-    VerificationsModule,
-    BillingModule,
-    AuditModule,
-    WebhooksModule,
+    JobsModule
   ],
+  controllers: [HealthController]
 })
 export class AppModule {}
