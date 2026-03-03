@@ -12,60 +12,74 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PeopleService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const audit_service_1 = require("../audit/audit.service");
 let PeopleService = class PeopleService {
-    constructor(prisma) {
+    constructor(prisma, audit) {
         this.prisma = prisma;
+        this.audit = audit;
     }
-    async create(createPersonDto, organizationId) {
+    async create(organizationId, actor, dto) {
         const person = await this.prisma.person.create({
             data: {
-                firstName: createPersonDto.firstName,
-                lastName: createPersonDto.lastName,
-                email: createPersonDto.email,
-                phone: createPersonDto.phone,
-                address1: createPersonDto.address,
-                city: createPersonDto.city,
-                state: createPersonDto.state,
-                postalCode: createPersonDto.zip,
-                type: createPersonDto.type,
-                dob: createPersonDto.dateOfBirth ? new Date(createPersonDto.dateOfBirth) : undefined,
-                organization: {
-                    connect: { id: organizationId }
-                }
-            },
+                organizationId,
+                type: dto.type ?? "CLIENT",
+                firstName: dto.firstName,
+                lastName: dto.lastName,
+                phone: dto.phone,
+                email: dto.email
+            }
+        });
+        await this.audit.write({
+            organizationId,
+            actorUserId: actor.userId,
+            actorClerkUserId: actor.clerkUserId,
+            action: "PERSON_CREATED",
+            entityType: "Person",
+            entityId: person.id
         });
         return person;
     }
-    async findAll(organizationId) {
-        return this.prisma.person.findMany({
-            where: {
-                organizationId: organizationId,
-            },
-        });
+    async list(organizationId, params) {
+        const where = { organizationId };
+        if (params.type)
+            where.type = params.type;
+        if (params.search) {
+            where.OR = [
+                { firstName: { contains: params.search, mode: "insensitive" } },
+                { lastName: { contains: params.search, mode: "insensitive" } },
+                { email: { contains: params.search, mode: "insensitive" } },
+                { phone: { contains: params.search, mode: "insensitive" } }
+            ];
+        }
+        return this.prisma.person.findMany({ where, orderBy: { createdAt: "desc" }, take: 50 });
     }
-    async findOne(id, organizationId) {
-        return this.prisma.person.findFirst({
-            where: {
-                id,
-                organizationId: organizationId,
-            },
-        });
+    async get(organizationId, id) {
+        const person = await this.prisma.person.findFirst({ where: { id, organizationId } });
+        if (!person)
+            throw new common_1.NotFoundException("Person not found");
+        return person;
     }
-    async update(id, updatePersonDto, organizationId) {
-        return this.prisma.person.update({
+    async update(organizationId, actor, id, dto) {
+        await this.get(organizationId, id);
+        const updated = await this.prisma.person.update({
             where: { id },
-            data: updatePersonDto,
+            data: { ...dto }
         });
-    }
-    async remove(id, organizationId) {
-        return this.prisma.person.delete({
-            where: { id },
+        await this.audit.write({
+            organizationId,
+            actorUserId: actor.userId,
+            actorClerkUserId: actor.clerkUserId,
+            action: "PERSON_UPDATED",
+            entityType: "Person",
+            entityId: id,
+            diffJson: dto
         });
+        return updated;
     }
 };
 exports.PeopleService = PeopleService;
 exports.PeopleService = PeopleService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], PeopleService);
 //# sourceMappingURL=people.service.js.map

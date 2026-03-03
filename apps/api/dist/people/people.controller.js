@@ -14,72 +14,61 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PeopleController = void 0;
 const common_1 = require("@nestjs/common");
-const people_service_1 = require("./people.service");
-const create_person_dto_1 = require("./dto/create-person.dto");
 const auth_guard_1 = require("../auth/auth.guard");
+const people_service_1 = require("./people.service");
+const dto_1 = require("./dto");
 let PeopleController = class PeopleController {
-    constructor(peopleService) {
-        this.peopleService = peopleService;
+    constructor(people) {
+        this.people = people;
     }
-    create(createPersonDto, req) {
-        return this.peopleService.create(createPersonDto, req.user.organizationId);
+    create(req, dto) {
+        return this.people.create(req.user.organizationId, req.user, dto);
     }
-    findAll(req, type, search) {
-        return this.peopleService.findAll(req.user.organizationId);
+    list(req, type, search) {
+        return this.people.list(req.user.organizationId, { type, search });
     }
-    findOne(id, req) {
-        return this.peopleService.findOne(id, req.user.organizationId);
+    get(req, id) {
+        return this.people.get(req.user.organizationId, id);
     }
-    update(id, updatePersonDto, req) {
-        return this.peopleService.update(id, updatePersonDto, req.user.organizationId);
-    }
-    remove(id, req) {
-        return this.peopleService.remove(id, req.user.organizationId);
+    update(req, id, dto) {
+        return this.people.update(req.user.organizationId, req.user, id, dto);
     }
 };
 exports.PeopleController = PeopleController;
 __decorate([
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Request)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_person_dto_1.CreatePersonDto, Object]),
+    __metadata("design:paramtypes", [Object, dto_1.CreatePersonDto]),
     __metadata("design:returntype", void 0)
 ], PeopleController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Query)('type')),
-    __param(2, (0, common_1.Query)('search')),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)("type")),
+    __param(2, (0, common_1.Query)("search")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", void 0)
-], PeopleController.prototype, "findAll", null);
+], PeopleController.prototype, "list", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Request)()),
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
-], PeopleController.prototype, "findOne", null);
+], PeopleController.prototype, "get", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Request)()),
+    (0, common_1.Patch)(":id"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [Object, String, dto_1.UpdatePersonDto]),
     __metadata("design:returntype", void 0)
 ], PeopleController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
-], PeopleController.prototype, "remove", null);
 exports.PeopleController = PeopleController = __decorate([
     (0, common_1.Controller)("people"),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

@@ -14,44 +14,75 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CasesController = void 0;
 const common_1 = require("@nestjs/common");
+const auth_guard_1 = require("../auth/auth.guard");
 const cases_service_1 = require("./cases.service");
+const dto_1 = require("./dto");
 let CasesController = class CasesController {
-    constructor(casesService) {
-        this.casesService = casesService;
+    constructor(cases) {
+        this.cases = cases;
     }
-    findAll() {
-        return this.casesService.findAll();
+    create(req, dto) {
+        return this.cases.create(req.user.organizationId, req.user, dto);
     }
-    findOne(id) {
-        return this.casesService.findOne(id);
+    list(req, status, search) {
+        return this.cases.list(req.user.organizationId, { status, search });
     }
-    create(data) {
-        return this.casesService.create(data);
+    get(req, id) {
+        return this.cases.get(req.user.organizationId, id);
+    }
+    update(req, id, dto) {
+        return this.cases.update(req.user.organizationId, req.user, id, dto);
+    }
+    close(req, id) {
+        return this.cases.close(req.user.organizationId, req.user, id);
     }
 };
 exports.CasesController = CasesController;
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], CasesController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], CasesController.prototype, "findOne", null);
-__decorate([
     (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, dto_1.CreateCaseDto]),
     __metadata("design:returntype", void 0)
 ], CasesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)("status")),
+    __param(2, (0, common_1.Query)("search")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "list", null);
+__decorate([
+    (0, common_1.Get)(":id"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "get", null);
+__decorate([
+    (0, common_1.Patch)(":id"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, dto_1.UpdateCaseDto]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "update", null);
+__decorate([
+    (0, common_1.Post)(":id/close"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("id")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], CasesController.prototype, "close", null);
 exports.CasesController = CasesController = __decorate([
-    (0, common_1.Controller)('cases'),
+    (0, common_1.Controller)("cases"),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [cases_service_1.CasesService])
 ], CasesController);
 //# sourceMappingURL=cases.controller.js.map

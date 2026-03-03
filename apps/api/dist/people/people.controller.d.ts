@@ -1,9 +1,9 @@
 import { PeopleService } from "./people.service";
-import { CreatePersonDto } from "./dto/create-person.dto";
+import { CreatePersonDto, UpdatePersonDto } from "./dto";
 export declare class PeopleController {
-    private readonly peopleService;
-    constructor(peopleService: PeopleService);
-    create(createPersonDto: CreatePersonDto, req: any): Promise<{
+    private people;
+    constructor(people: PeopleService);
+    create(req: any, dto: CreatePersonDto): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -20,7 +20,7 @@ export declare class PeopleController {
         updatedAt: Date;
         organizationId: string;
     }>;
-    findAll(req: any, type?: string, search?: string): Promise<{
+    list(req: any, type?: string, search?: string): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -37,7 +37,7 @@ export declare class PeopleController {
         updatedAt: Date;
         organizationId: string;
     }[]>;
-    findOne(id: string, req: any): Promise<{
+    get(req: any, id: string): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -54,24 +54,7 @@ export declare class PeopleController {
         updatedAt: Date;
         organizationId: string;
     }>;
-    update(id: string, updatePersonDto: any, req: any): Promise<{
-        id: string;
-        type: import("@prisma/client").$Enums.PersonType;
-        firstName: string;
-        lastName: string;
-        phone: string | null;
-        email: string | null;
-        dob: Date | null;
-        address1: string | null;
-        address2: string | null;
-        city: string | null;
-        state: string | null;
-        postalCode: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-    }>;
-    remove(id: string, req: any): Promise<{
+    update(req: any, id: string, dto: UpdatePersonDto): Promise<{
         id: string;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;

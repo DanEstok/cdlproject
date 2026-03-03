@@ -1,59 +1,75 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreatePersonDto } from "./dto/create-person.dto";
+import { AuditService } from "../audit/audit.service";
+import { CreatePersonDto, UpdatePersonDto } from "./dto";
 
 @Injectable()
 export class PeopleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private audit: AuditService) {}
 
-  async create(createPersonDto: CreatePersonDto, organizationId: string) {
+  async create(organizationId: string, actor: { userId: string; clerkUserId: string }, dto: CreatePersonDto) {
     const person = await this.prisma.person.create({
       data: {
-        firstName: createPersonDto.firstName,
-        lastName: createPersonDto.lastName,
-        email: createPersonDto.email,
-        phone: createPersonDto.phone,
-        address1: createPersonDto.address,
-        city: createPersonDto.city,
-        state: createPersonDto.state,
-        postalCode: createPersonDto.zip,
-        type: createPersonDto.type as any, // Cast to Prisma enum
-        dob: createPersonDto.dateOfBirth ? new Date(createPersonDto.dateOfBirth) : undefined,
-        organization: {
-          connect: { id: organizationId }
-        }
-      },
+        organizationId,
+        type: dto.type ?? "CLIENT",
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        phone: dto.phone,
+        email: dto.email
+      }
     });
+
+    await this.audit.write({
+      organizationId,
+      actorUserId: actor.userId,
+      actorClerkUserId: actor.clerkUserId,
+      action: "PERSON_CREATED",
+      entityType: "Person",
+      entityId: person.id
+    });
+
     return person;
   }
 
-  async findAll(organizationId: string) {
-    return this.prisma.person.findMany({
-      where: {
-        organizationId: organizationId,
-      },
-    });
+  async list(organizationId: string, params: { type?: string; search?: string }) {
+    const where: any = { organizationId };
+    if (params.type) where.type = params.type;
+
+    if (params.search) {
+      where.OR = [
+        { firstName: { contains: params.search, mode: "insensitive" } },
+        { lastName: { contains: params.search, mode: "insensitive" } },
+        { email: { contains: params.search, mode: "insensitive" } },
+        { phone: { contains: params.search, mode: "insensitive" } }
+      ];
+    }
+
+    return this.prisma.person.findMany({ where, orderBy: { createdAt: "desc" }, take: 50 });
   }
 
-  async findOne(id: string, organizationId: string) {
-    return this.prisma.person.findFirst({
-      where: {
-        id,
-        organizationId: organizationId,
-      },
-    });
+  async get(organizationId: string, id: string) {
+    const person = await this.prisma.person.findFirst({ where: { id, organizationId } });
+    if (!person) throw new NotFoundException("Person not found");
+    return person;
   }
 
-  async update(id: string, updatePersonDto: any, organizationId: string) {
-    return this.prisma.person.update({
+  async update(organizationId: string, actor: { userId: string; clerkUserId: string }, id: string, dto: UpdatePersonDto) {
+    await this.get(organizationId, id);
+    const updated = await this.prisma.person.update({
       where: { id },
-      data: updatePersonDto,
+      data: { ...dto }
     });
-  }
 
-  async remove(id: string, organizationId: string) {
-    return this.prisma.person.delete({
-      where: { id },
+    await this.audit.write({
+      organizationId,
+      actorUserId: actor.userId,
+      actorClerkUserId: actor.clerkUserId,
+      action: "PERSON_UPDATED",
+      entityType: "Person",
+      entityId: id,
+      diffJson: dto
     });
+
+    return updated;
   }
 }
