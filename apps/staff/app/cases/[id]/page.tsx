@@ -73,7 +73,8 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const verifs = await apiFetch<Verification[]>(`/cases/${params.id}/verifications`);
   const timeline = await apiFetch<TimelineItem[]>(`/cases/${params.id}/timeline`);
   const readiness = await apiFetch<Readiness>(`/cases/${params.id}/readiness`);
-  const programs = await apiFetch<{ programKeys: string[] }>(`/readiness/programs`);
+  const programs = await apiFetch<Array<{ programKey: string; displayName: string; enabled: boolean }>>(`/programs`);
+  const enabledPrograms = programs.filter(p => p.enabled);
 
   // For uploader (client-side), we need an actual token for browser calls
   const session = await auth();
@@ -118,9 +119,9 @@ export default async function CasePage({ params }: { params: { id: string } }) {
 
         <form action={`/cases/${params.id}/program/set`} method="post" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <select name="programKey" defaultValue={readiness.programKey}>
-            {programs.programKeys.map((k) => (
-              <option key={k} value={k}>
-                {k}
+            {enabledPrograms.map((p) => (
+              <option key={p.programKey} value={p.programKey}>
+                {p.displayName}
               </option>
             ))}
           </select>

@@ -146,6 +146,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/admin/programs/[programKey]/details/save/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/admin/programs/[programKey]/details/save">> = Specific
+  const handler = {} as typeof import("../../app/admin/programs/[programKey]/details/save/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/admin/programs/[programKey]/requirements/save/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/admin/programs/[programKey]/requirements/save">> = Specific
+  const handler = {} as typeof import("../../app/admin/programs/[programKey]/requirements/save/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/admin/programs/[programKey]/toggle/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/admin/programs/[programKey]/toggle">> = Specific
