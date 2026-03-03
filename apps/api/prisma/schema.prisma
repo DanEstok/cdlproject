@@ -115,6 +115,7 @@ model Organization {
   invoices  Invoice[]
   time      TimeEntry[]
   verifs    Verification[]
+  programEnrollments ProgramEnrollment[]
 }
 
 model User {
@@ -260,6 +261,7 @@ model Document {
   createdAt      DateTime @default(now())
 
   organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case?         @relation(fields: [caseId], references: [id])
 
   @@index([organizationId, expiresAt])
 }

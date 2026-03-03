@@ -23,14 +23,14 @@ let PeopleService = class PeopleService {
                 lastName: createPersonDto.lastName,
                 email: createPersonDto.email,
                 phone: createPersonDto.phone,
-                address: createPersonDto.address,
+                address1: createPersonDto.address,
                 city: createPersonDto.city,
                 state: createPersonDto.state,
-                zip: createPersonDto.zip,
+                postalCode: createPersonDto.zip,
                 type: createPersonDto.type,
                 dob: createPersonDto.dateOfBirth ? new Date(createPersonDto.dateOfBirth) : undefined,
                 organization: {
-                    connect: { id: 'default-org' }
+                    connect: { id: '00000000-0000-0000-0000-000000000001' }
                 }
             },
         });
@@ -39,7 +39,7 @@ let PeopleService = class PeopleService {
     async findAll() {
         return this.prisma.person.findMany({
             where: {
-                organizationId: 'default-org',
+                organizationId: '00000000-0000-0000-0000-000000000001',
             },
         });
     }
@@ -47,7 +47,7 @@ let PeopleService = class PeopleService {
         return this.prisma.person.findFirst({
             where: {
                 id,
-                organizationId: 'default-org',
+                organizationId: '00000000-0000-0000-0000-000000000001',
             },
         });
     }

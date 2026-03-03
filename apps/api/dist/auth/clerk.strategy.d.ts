@@ -15,9 +15,8 @@ export declare class ClerkStrategy extends ClerkStrategy_base {
         organizationId: string;
         organization: {
             id: string;
-            name: string;
             createdAt: Date;
-            updatedAt: Date;
+            name: string;
         };
     }>;
 }

@@ -20,7 +20,7 @@ export class ClerkStrategy extends PassportStrategy(Strategy) {
           const decoded = JSON.parse(Buffer.from(rawJwtToken.split('.')[1], 'base64').toString());
           return done(null, decoded);
         } catch (error) {
-          return done(error, null);
+          return done(error, undefined);
         }
       },
     });

@@ -26,7 +26,7 @@ let ClerkStrategy = class ClerkStrategy extends (0, passport_1.PassportStrategy)
                     return done(null, decoded);
                 }
                 catch (error) {
-                    return done(error, null);
+                    return done(error, undefined);
                 }
             },
         });
