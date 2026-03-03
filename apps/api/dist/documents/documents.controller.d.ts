@@ -9,6 +9,8 @@ export declare class DocumentsController {
     }>;
     complete(req: any, dto: CompleteDocumentDto): Promise<{
         id: string;
+        organizationId: string;
+        caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
         uploadedByPersonId: string | null;
@@ -20,11 +22,11 @@ export declare class DocumentsController {
         issueDate: Date | null;
         expiresAt: Date | null;
         createdAt: Date;
-        organizationId: string;
-        caseId: string | null;
     }>;
     list(req: any, caseId?: string, personId?: string): Promise<{
         id: string;
+        organizationId: string;
+        caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
         uploadedByPersonId: string | null;
@@ -36,8 +38,6 @@ export declare class DocumentsController {
         issueDate: Date | null;
         expiresAt: Date | null;
         createdAt: Date;
-        organizationId: string;
-        caseId: string | null;
     }[]>;
     presignDownload(req: any, body: {
         documentId: string;

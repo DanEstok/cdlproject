@@ -9,6 +9,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const status = String(form.get("status") || "PENDING");
   const nextDueAt = String(form.get("nextDueAt") || "").trim();
   const notes = String(form.get("notes") || "").trim();
+  const evidenceDocumentId = String(form.get("evidenceDocumentId") || "").trim();
 
   await apiFetch(`/cases/${params.id}/verifications`, {
     method: "POST",
@@ -16,7 +17,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       type,
       status,
       nextDueAt: nextDueAt || undefined,
-      notes: notes || undefined
+      notes: notes || undefined,
+      evidenceDocumentId: evidenceDocumentId || undefined
     })
   });
 

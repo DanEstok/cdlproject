@@ -6,6 +6,7 @@ type Case = {
   id: string;
   status: string;
   notes?: string | null;
+  clientPersonId: string;
   client: { firstName: string; lastName: string };
 };
 
@@ -114,7 +115,12 @@ export default async function CasePage({ params }: { params: { id: string } }) {
       {/* DOCUMENTS */}
       <section style={{ marginTop: 20 }}>
         <h3>Documents</h3>
-        <DocumentUploader apiBase={apiBase} token={token} caseId={params.id} />
+        <DocumentUploader
+        apiBase={apiBase}
+        token={token}
+        caseId={params.id}
+        clientPersonId={c.clientPersonId}
+      />
 
         <ul style={{ marginTop: 12 }}>
           {docs.map((d) => (
@@ -141,7 +147,11 @@ export default async function CasePage({ params }: { params: { id: string } }) {
       <section style={{ marginTop: 28 }}>
         <h3>Verifications</h3>
 
-        <form action={`/cases/${params.id}/verifications/create`} method="post" style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+        <form
+          action={`/cases/${params.id}/verifications/create`}
+          method="post"
+          style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}
+        >
           <select name="type" defaultValue="DOT_MEDICAL">
             <option value="DOT_MEDICAL">DOT_MEDICAL</option>
             <option value="MVR">MVR</option>
@@ -158,6 +168,15 @@ export default async function CasePage({ params }: { params: { id: string } }) {
           <input name="nextDueAt" placeholder="Next due ISO (optional)" />
           <input name="notes" placeholder="Notes (optional)" />
 
+          <select name="evidenceDocumentId" defaultValue="">
+            <option value="">Evidence (optional)</option>
+            {docs.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.docType}: {d.fileName}
+              </option>
+            ))}
+          </select>
+
           <button type="submit">Add Verification</button>
         </form>
 
@@ -173,6 +192,12 @@ export default async function CasePage({ params }: { params: { id: string } }) {
                     {v.nextDueAt ? ` | Next due: ${new Date(v.nextDueAt).toLocaleString()}` : ""}
                   </div>
                   {v.notes ? <div style={{ marginTop: 6, fontSize: 13 }}>{v.notes}</div> : null}
+                  {v.evidenceDocumentId ? (
+                    <div style={{ marginTop: 6, fontSize: 13 }}>
+                      Evidence:{" "}
+                      <a href={`/documents/${v.evidenceDocumentId}/download`}>View evidence</a>
+                    </div>
+                  ) : null}
                 </div>
 
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

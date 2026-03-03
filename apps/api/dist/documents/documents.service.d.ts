@@ -7,6 +7,7 @@ export declare class DocumentsService {
     private s3;
     private bucket;
     constructor(prisma: PrismaService, audit: AuditService);
+    private ensureTask;
     presign(organizationId: string, dto: PresignDocumentDto): Promise<{
         storageKey: string;
         uploadUrl: string;

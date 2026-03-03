@@ -5,6 +5,8 @@ import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuid } from "uuid";
 import { CompleteDocumentDto, PresignDocumentDto } from "./dto";
+import { VerificationStatus, VerificationType } from "@prisma/client";
+import { computeDefaultNextDueAt } from "../verifications/rules";
 
 @Injectable()
 export class DocumentsService {
@@ -23,6 +25,37 @@ export class DocumentsService {
       forcePathStyle: true
     });
   }
+
+  private async ensureTask(
+  organizationId: string,
+  caseId: string,
+  title: string,
+  marker: string,
+  dueInDays?: number
+) {
+  const existing = await this.prisma.task.findFirst({
+    where: {
+      organizationId,
+      caseId,
+      title,
+      description: { contains: marker }
+    }
+  });
+  if (existing) return;
+
+  const dueAt = dueInDays ? new Date(Date.now() + dueInDays * 24 * 60 * 60 * 1000) : undefined;
+
+  await this.prisma.task.create({
+    data: {
+      organizationId,
+      caseId,
+      title,
+      description: `Auto-generated from document upload. ${marker}`,
+      status: "TODO",
+      dueAt
+    }
+  });
+}
 
   async presign(organizationId: string, dto: PresignDocumentDto) {
     if (!this.bucket) throw new BadRequestException("S3_BUCKET not configured");
@@ -104,6 +137,84 @@ export class DocumentsService {
       entityType: "Document",
       entityId: doc.id
     });
+
+    // Auto-create a verification when uploading key compliance documents
+    // Map docType -> verification type
+    const docTypeToVerification: Partial<Record<string, VerificationType>> = {
+      DOT_MEDICAL: VerificationType.DOT_MEDICAL,
+      MVR: VerificationType.MVR,
+      CLEARINGHOUSE: VerificationType.CLEARINGHOUSE
+    };
+
+    const vType = docTypeToVerification[dto.docType];
+    if (vType && doc.caseId) {
+      // avoid duplicates for the same evidence doc
+      const existing = await this.prisma.verification.findFirst({
+        where: {
+          organizationId,
+          caseId: doc.caseId,
+          type: vType,
+          evidenceDocumentId: doc.id
+        }
+      });
+
+      if (!existing) {
+        const baseDate = doc.issueDate ?? new Date();
+        const nextDueAt =
+          doc.expiresAt ??
+          computeDefaultNextDueAt(vType, baseDate) ??
+          undefined;
+
+        const v = await this.prisma.verification.create({
+          data: {
+            organizationId,
+            caseId: doc.caseId,
+            type: vType,
+            status: VerificationStatus.PENDING,
+            nextDueAt,
+            notes: `Auto-created from uploaded document: ${doc.fileName}`,
+            evidenceDocumentId: doc.id
+          }
+        });
+
+        await this.audit.write({
+          organizationId,
+          actorUserId: actor.userId,
+          actorClerkUserId: actor.clerkUserId,
+          action: "VERIFICATION_AUTO_CREATED_FROM_DOCUMENT",
+          entityType: "Verification",
+          entityId: v.id,
+          diffJson: { documentId: doc.id, type: v.type }
+        });
+      }
+    }
+
+    // Auto-create workflow tasks based on uploaded document type
+    if (doc.caseId) {
+      const marker = `documentId=${doc.id};docType=${doc.docType}`;
+
+      // ID uploaded -> kick off compliance sequence
+      if (doc.docType === "ID") {
+        await this.ensureTask(doc.organizationId, doc.caseId, "Run MVR (Motor Vehicle Record)", marker, 2);
+        await this.ensureTask(doc.organizationId, doc.caseId, "Run Clearinghouse (DACH) query", marker, 2);
+        await this.ensureTask(doc.organizationId, doc.caseId, "Schedule DOT physical / obtain medical card", marker, 7);
+      }
+
+      // DOT medical uploaded -> optional follow-up tasks
+      if (doc.docType === "DOT_MEDICAL") {
+        await this.ensureTask(doc.organizationId, doc.caseId, "Verify DOT medical details and expiration date", marker, 3);
+      }
+
+      // MVR uploaded -> review task
+      if (doc.docType === "MVR") {
+        await this.ensureTask(doc.organizationId, doc.caseId, "Review MVR for disqualifiers and points", marker, 3);
+      }
+
+      // Clearinghouse uploaded -> review task
+      if (doc.docType === "CLEARINGHOUSE") {
+        await this.ensureTask(doc.organizationId, doc.caseId, "Review Clearinghouse result and document outcomes", marker, 3);
+      }
+    }
 
     return doc;
   }

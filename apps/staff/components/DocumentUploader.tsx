@@ -15,11 +15,13 @@ type DocType =
 export function DocumentUploader({
   apiBase,
   token,
-  caseId
+  caseId,
+  clientPersonId
 }: {
   apiBase: string;
   token: string;
   caseId: string;
+  clientPersonId: string;
 }) {
   const [file, setFile] = useState<File | null>(null);
   const [docType, setDocType] = useState<DocType>("OTHER");
@@ -75,6 +77,9 @@ export function DocumentUploader({
     // 3) Complete (save metadata in DB)
     setStatus("Finalizing document record…");
 
+    const attachPerson = docType === "ID"; // default rule: IDs belong to the person
+    const attachCase = true;              // keep everything case-scoped too (best for workflows)
+
     const completeRes = await fetch(`${apiBase}/documents/complete`, {
       method: "POST",
       headers: {
@@ -87,7 +92,8 @@ export function DocumentUploader({
         mimeType: file.type || "application/octet-stream",
         sizeBytes: file.size,
         docType,
-        caseId,
+        caseId: attachCase ? caseId : undefined,
+        personId: attachPerson ? clientPersonId : undefined,
         issueDate: issueDate || undefined,
         expiresAt: expiresAt || undefined
       })
@@ -98,7 +104,7 @@ export function DocumentUploader({
       throw new Error(`Complete failed: ${t}`);
     }
 
-    setStatus("Done. Refreshing…");
+    setStatus("Done. If this was DOT_MEDICAL/MVR/CLEARINGHOUSE, a verification was created automatically. Refreshing…");
     // simplest MVP: refresh the page to re-fetch list
     window.location.reload();
   }
