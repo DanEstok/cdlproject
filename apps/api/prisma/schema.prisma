@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,261 +5,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-model Organization {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  users     User[]
-  people    Person[]
-  cases     Case[]
-  programEnrollments ProgramEnrollment[]
-  tasks     Task[]
-  notes     Note[]
-  documents Document[]
-  verifications Verification[]
-  timeEntries TimeEntry[]
-  invoices  Invoice[]
-  auditEvents AuditEvent[]
-
-  @@map("organizations")
-}
-
-model User {
-  id           String    @id @default(cuid())
-  organizationId String
-  clerkUserId  String    @unique
-  role         UserRole
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  authoredNotes       Note[]       @relation("NoteAuthor")
-  primaryCases        Case[]       @relation("PrimaryCaseManager")
-  assignedTasks       Task[]       @relation("AssignedUser")
-  verifiedVerifications Verification[] @relation("VerifiedBy")
-  timeEntries         TimeEntry[]
-  auditEvents         AuditEvent[] @relation("UserActor")
-  uploadedDocuments   Document[]   @relation("UploadedByUser")
-
-  @@map("users")
-}
-
-model Person {
-  id             String     @id @default(cuid())
-  organizationId String
-  type           PersonType
-  firstName      String
-  lastName       String
-  phone          String?
-  email          String?
-  dob            DateTime?
-  address        String?
-  address2       String?
-  city           String?
-  state          String?
-  zip            String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  clientCases  Case[]       @relation("ClientPerson")
-  assignedTasks Task[]       @relation("AssignedPerson")
-  uploadedDocuments Document[] @relation("UploadedByPerson")
-  clientInvoices Invoice[]    @relation("ClientPerson")
-
-  @@map("people")
-}
-
-model Case {
-  id                     String    @id @default(cuid())
-  organizationId         String
-  clientPersonId         String
-  status                 CaseStatus
-  openedAt               DateTime  @default(now())
-  closedAt               DateTime?
-  primaryCaseManagerUserId String?
-  caseNotes              String?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-
-  organization        Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  client              Person             @relation("ClientPerson", fields: [clientPersonId], references: [id])
-  primaryCaseManager  User?              @relation("PrimaryCaseManager", fields: [primaryCaseManagerUserId], references: [id])
-  programEnrollments  ProgramEnrollment[]
-  tasks               Task[]
-  notes               Note[]
-  documents           Document[]
-  verifications       Verification[]
-  timeEntries         TimeEntry[]
-  invoices            Invoice[]
-
-  @@map("cases")
-}
-
-model ProgramEnrollment {
-  id             String        @id @default(cuid())
-  organizationId String
-  caseId         String
-  programType    ProgramType
-  status         ProgramStatus
-  startedAt      DateTime      @default(now())
-  endedAt        DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case         Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
-
-  @@map("program_enrollments")
-}
-
-model Task {
-  id                 String     @id @default(cuid())
-  organizationId     String
-  caseId             String
-  assignedToUserId   String?
-  assignedToPersonId String?
-  title              String
-  description        String?
-  status             TaskStatus @default(TODO)
-  dueAt              DateTime?
-  completedAt        DateTime?
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case           Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  assignedUser   User?        @relation("AssignedUser", fields: [assignedToUserId], references: [id])
-  assignedPerson Person?      @relation("AssignedPerson", fields: [assignedToPersonId], references: [id])
-
-  @@map("tasks")
-}
-
-model Note {
-  id           String     @id @default(cuid())
-  organizationId String
-  caseId       String
-  authorUserId String
-  noteType     NoteType
-  templateKey  String?
-  contentJson  Json
-  narrative    String?
-  status       NoteStatus @default(DRAFT)
-  signedAt     DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case         Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  author       User         @relation("NoteAuthor", fields: [authorUserId], references: [id])
-
-  @@map("notes")
-}
-
-model Document {
-  id               String       @id @default(cuid())
-  organizationId   String
-  caseId           String?
-  uploadedByUserId String?
-  uploadedByPersonId String?
-  fileName         String
-  mimeType         String
-  storageKey       String
-  sizeBytes        Int
-  docType          DocumentType
-  issueDate        DateTime?
-  expiresAt        DateTime?
-  createdAt        DateTime     @default(now())
-
-  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case             Case?        @relation(fields: [caseId], references: [id])
-  uploadedByUser   User?        @relation("UploadedByUser", fields: [uploadedByUserId], references: [id])
-  uploadedByPerson Person?      @relation("UploadedByPerson", fields: [uploadedByPersonId], references: [id])
-  evidenceVerifications Verification[] @relation("EvidenceDocument")
-
-  @@map("documents")
-}
-
-model Verification {
-  id                 String           @id @default(cuid())
-  organizationId     String
-  caseId             String
-  type               VerificationType
-  status             VerificationStatus @default(PENDING)
-  verifiedAt         DateTime?
-  nextDueAt          DateTime?
-  verifiedByUserId   String?
-  notes              String?
-  evidenceDocumentId String?
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-
-  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case             Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  verifiedBy       User?        @relation("VerifiedBy", fields: [verifiedByUserId], references: [id])
-  evidenceDocument Document?    @relation("EvidenceDocument", fields: [evidenceDocumentId], references: [id])
-
-  @@map("verifications")
-}
-
-model TimeEntry {
-  id             String    @id @default(cuid())
-  organizationId String
-  caseId         String
-  userId         String
-  minutes        Int
-  workType       WorkType
-  performedAt    DateTime
-  notes          String?
-  createdAt      DateTime  @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case         Case         @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  user         User         @relation(fields: [userId], references: [id])
-
-  @@map("time_entries")
-}
-
-model Invoice {
-  id               String         @id @default(cuid())
-  organizationId   String
-  caseId           String?
-  clientPersonId   String?
-  stripeInvoiceId  String         @unique
-  status           InvoiceStatus   @default(DRAFT)
-  amountCents      Int
-  currency         String          @default("USD")
-  hostedInvoiceUrl String?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  case         Case?        @relation(fields: [caseId], references: [id])
-  client       Person?      @relation("ClientPerson", fields: [clientPersonId], references: [id])
-
-  @@map("invoices")
-}
-
-model AuditEvent {
-  id               String    @id @default(cuid())
-  organizationId   String
-  actorUserId      String?
-  actorClerkUserId String?
-  action           String
-  entityType       String
-  entityId         String
-  diffJson         Json?
-  createdAt        DateTime  @default(now())
-
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  actorUser    User?        @relation("UserActor", fields: [actorUserId], references: [id])
-
-  @@map("audit_events")
 }
 
 enum UserRole {
@@ -293,7 +35,7 @@ enum ProgramType {
   DBE_PATHWAY
 }
 
-enum ProgramStatus {
+enum EnrollmentStatus {
   ACTIVE
   COMPLETED
   DROPPED
@@ -356,4 +98,246 @@ enum InvoiceStatus {
   PAID
   VOID
   UNCOLLECTIBLE
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  users     User[]
+  people    Person[]
+  cases     Case[]
+  notes     Note[]
+  tasks     Task[]
+  documents Document[]
+  audits    AuditEvent[]
+  invoices  Invoice[]
+  time      TimeEntry[]
+  verifs    Verification[]
+}
+
+model User {
+  id             String   @id @default(uuid())
+  organizationId String
+  clerkUserId    String   @unique
+  role           UserRole @default(CASE_MANAGER)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+model Person {
+  id             String     @id @default(uuid())
+  organizationId String
+  type           PersonType @default(CLIENT)
+
+  firstName      String
+  lastName       String
+  phone          String?
+  email          String?
+  dob            DateTime?
+  address1       String?
+  address2       String?
+  city           String?
+  state          String?
+  postalCode     String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  cases          Case[]        @relation("ClientCases")
+}
+
+model Case {
+  id             String     @id @default(uuid())
+  organizationId String
+  clientPersonId String
+  status         CaseStatus @default(OPEN)
+  openedAt       DateTime   @default(now())
+  closedAt       DateTime?
+  notes          String?
+
+  primaryCaseManagerUserId String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  client         Person       @relation("ClientCases", fields: [clientPersonId], references: [id])
+  enrollments    ProgramEnrollment[]
+  tasks          Task[]
+  notesList      Note[]
+  documents      Document[]
+  verifications  Verification[]
+  timeEntries    TimeEntry[]
+  invoices       Invoice[]
+
+  @@index([organizationId, status])
+}
+
+model ProgramEnrollment {
+  id             String           @id @default(uuid())
+  organizationId String
+  caseId         String
+  programType    ProgramType
+  status         EnrollmentStatus @default(ACTIVE)
+  startedAt      DateTime         @default(now())
+  endedAt        DateTime?
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
+
+  @@index([organizationId, caseId])
+}
+
+model Task {
+  id             String     @id @default(uuid())
+  organizationId String
+  caseId         String
+
+  assignedToUserId   String?
+  assignedToPersonId String?
+
+  title          String
+  description    String?
+  status         TaskStatus @default(TODO)
+  dueAt          DateTime?
+  completedAt    DateTime?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
+
+  @@index([organizationId, status, dueAt])
+}
+
+model Note {
+  id             String     @id @default(uuid())
+  organizationId String
+  caseId         String
+  authorUserId   String
+
+  noteType       NoteType
+  templateKey    String?
+  contentJson    Json
+  narrative      String?
+  status         NoteStatus @default(DRAFT)
+  signedAt       DateTime?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
+
+  @@index([organizationId, caseId, createdAt])
+}
+
+model Document {
+  id             String       @id @default(uuid())
+  organizationId String
+  caseId         String?
+  personId       String?
+
+  uploadedByUserId   String?
+  uploadedByPersonId String?
+
+  fileName       String
+  mimeType       String
+  storageKey     String
+  sizeBytes      Int
+
+  docType        DocumentType
+  issueDate      DateTime?
+  expiresAt      DateTime?
+
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, expiresAt])
+}
+
+model Verification {
+  id             String             @id @default(uuid())
+  organizationId String
+  caseId         String
+
+  type           VerificationType
+  status         VerificationStatus @default(PENDING)
+
+  verifiedAt     DateTime?
+  nextDueAt      DateTime?
+  verifiedByUserId String?
+  notes          String?
+  evidenceDocumentId String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
+
+  @@index([organizationId, caseId, type])
+}
+
+model TimeEntry {
+  id             String   @id @default(uuid())
+  organizationId String
+  caseId         String
+  userId         String
+
+  minutes        Int
+  workType       WorkType
+  performedAt    DateTime @default(now())
+  notes          String?
+
+  createdAt      DateTime @default(now())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  organizationId String
+  caseId         String?
+  clientPersonId String?
+
+  stripeInvoiceId String
+  status         InvoiceStatus @default(DRAFT)
+  amountCents    Int
+  currency       String @default("usd")
+  hostedInvoiceUrl String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  case           Case?        @relation(fields: [caseId], references: [id])
+}
+
+model AuditEvent {
+  id             String   @id @default(uuid())
+  organizationId String
+
+  actorUserId      String?
+  actorClerkUserId String?
+
+  action        String
+  entityType    String
+  entityId      String
+  diffJson      Json?
+
+  createdAt     DateTime @default(now())
+
+  organization  Organization @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId, createdAt])
 }

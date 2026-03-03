@@ -23,4 +23,4 @@ async function main() {
     console.log("Seed complete.");
 }
 main().finally(async () => prisma.$disconnect());
-//# sourceMappingURL=seed.js.map
+//# sourceMappingURL=seed.new.js.map
