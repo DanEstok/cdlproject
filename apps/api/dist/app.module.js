@@ -20,6 +20,7 @@ const notes_module_1 = require("./notes/notes.module");
 const verifications_module_1 = require("./verifications/verifications.module");
 const timeline_module_1 = require("./timeline/timeline.module");
 const jobs_module_1 = require("./jobs/jobs.module");
+const readiness_config_module_1 = require("./readiness-config/readiness-config.module");
 const health_controller_1 = require("./health.controller");
 let AppModule = class AppModule {
 };
@@ -39,6 +40,7 @@ exports.AppModule = AppModule = __decorate([
             verifications_module_1.VerificationsModule,
             timeline_module_1.TimelineModule,
             jobs_module_1.JobsModule,
+            readiness_config_module_1.ReadinessConfigModule,
         ],
         controllers: [health_controller_1.HealthController]
     })

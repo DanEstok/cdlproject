@@ -11,45 +11,45 @@ export declare class NotesService {
         clerkUserId: string;
     }, caseId: string, dto: CreateNoteDto): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     list(organizationId: string, caseId: string): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }[]>;
     get(organizationId: string, id: string): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     update(organizationId: string, actor: {
         userId: string;
@@ -57,17 +57,17 @@ export declare class NotesService {
         role: string;
     }, id: string, dto: UpdateNoteDto): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     sign(organizationId: string, actor: {
         userId: string;
@@ -75,33 +75,33 @@ export declare class NotesService {
         role: string;
     }, id: string): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     addendum(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, id: string, dto: AddendumDto): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.NoteStatus;
+        caseId: string;
         authorUserId: string;
         noteType: import("@prisma/client").$Enums.NoteType;
         templateKey: string | null;
         contentJson: import("@prisma/client/runtime/library").JsonValue;
         narrative: string | null;
-        status: import("@prisma/client").$Enums.NoteStatus;
         signedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
 }

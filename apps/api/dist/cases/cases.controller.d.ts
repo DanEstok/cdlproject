@@ -26,6 +26,7 @@ export declare class CasesController {
     } & {
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
@@ -56,6 +57,7 @@ export declare class CasesController {
     } & {
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
@@ -95,6 +97,7 @@ export declare class CasesController {
     } & {
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
@@ -107,6 +110,7 @@ export declare class CasesController {
     update(req: any, id: string, dto: UpdateCaseDto): Promise<{
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
@@ -118,18 +122,23 @@ export declare class CasesController {
     }>;
     readinessForCase(req: any, id: string): Promise<{
         caseId: string;
+        programKey: string;
         percent: number;
-        done: number;
-        total: number;
+        doneWeight: number;
+        totalWeight: number;
         items: {
+            id: string;
             key: string;
             label: string;
+            kind: import("@prisma/client").$Enums.ReadinessRequirementKind;
+            weight: number;
             ok: boolean;
         }[];
     }>;
     close(req: any, id: string): Promise<{
         id: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;

@@ -12,8 +12,8 @@ export declare class AuditService {
         diffJson?: any;
     }): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         actorUserId: string | null;
         actorClerkUserId: string | null;
         action: string;

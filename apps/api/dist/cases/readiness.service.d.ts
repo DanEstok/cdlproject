@@ -5,12 +5,16 @@ export declare class ReadinessService {
     private ensureCase;
     getCaseReadiness(organizationId: string, caseId: string): Promise<{
         caseId: string;
+        programKey: string;
         percent: number;
-        done: number;
-        total: number;
+        doneWeight: number;
+        totalWeight: number;
         items: {
+            id: string;
             key: string;
             label: string;
+            kind: import("@prisma/client").$Enums.ReadinessRequirementKind;
+            weight: number;
             ok: boolean;
         }[];
     }>;

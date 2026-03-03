@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadinessService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const client_1 = require("@prisma/client");
 let ReadinessService = class ReadinessService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -25,51 +24,51 @@ let ReadinessService = class ReadinessService {
     }
     async getCaseReadiness(organizationId, caseId) {
         const c = await this.ensureCase(organizationId, caseId);
-        const [idDocs, verifs] = await Promise.all([
+        const reqs = await this.prisma.readinessRequirement.findMany({
+            where: { organizationId, programKey: c.programKey, enabled: true },
+            orderBy: [{ weight: "desc" }, { label: "asc" }]
+        });
+        const [docs, passedVerifs] = await Promise.all([
             this.prisma.document.findMany({
                 where: {
                     organizationId,
-                    OR: [
-                        { caseId },
-                        { personId: c.clientPersonId }
-                    ],
-                    docType: "ID"
+                    OR: [{ caseId }, { personId: c.clientPersonId }]
                 },
-                take: 1
+                select: { id: true, docType: true }
             }),
             this.prisma.verification.findMany({
-                where: { organizationId, caseId, status: client_1.VerificationStatus.PASSED },
-                orderBy: { verifiedAt: "desc" },
-                take: 50
+                where: { organizationId, caseId, status: "PASSED" },
+                select: { id: true, type: true }
             })
         ]);
-        const has = (type) => verifs.some(v => v.type === type);
-        const items = [
-            {
-                key: "ID_UPLOADED",
-                label: "ID document uploaded",
-                ok: idDocs.length > 0
-            },
-            {
-                key: "DOT_MEDICAL_PASSED",
-                label: "DOT Medical verification passed",
-                ok: has(client_1.VerificationType.DOT_MEDICAL)
-            },
-            {
-                key: "MVR_PASSED",
-                label: "MVR verification passed",
-                ok: has(client_1.VerificationType.MVR)
-            },
-            {
-                key: "CLEARINGHOUSE_PASSED",
-                label: "Clearinghouse verification passed",
-                ok: has(client_1.VerificationType.CLEARINGHOUSE)
-            }
-        ];
-        const total = items.length;
-        const done = items.filter(i => i.ok).length;
-        const percent = total === 0 ? 0 : Math.round((done / total) * 100);
-        return { caseId, percent, done, total, items };
+        const hasDocType = (docType) => docs.some(d => d.docType === docType);
+        const hasPassedVerification = (verificationType) => passedVerifs.some(v => v.type === verificationType);
+        const items = reqs.map((r) => {
+            let ok = false;
+            if (r.kind === "DOC_PRESENT" && r.docType)
+                ok = hasDocType(r.docType);
+            if (r.kind === "VERIFICATION_PASSED" && r.verificationType)
+                ok = hasPassedVerification(r.verificationType);
+            return {
+                id: r.id,
+                key: `${r.kind}:${r.docType || r.verificationType || r.label}`,
+                label: r.label,
+                kind: r.kind,
+                weight: r.weight,
+                ok
+            };
+        });
+        const totalWeight = items.reduce((sum, i) => sum + (i.weight || 1), 0);
+        const doneWeight = items.filter(i => i.ok).reduce((sum, i) => sum + (i.weight || 1), 0);
+        const percent = totalWeight === 0 ? 0 : Math.round((doneWeight / totalWeight) * 100);
+        return {
+            caseId,
+            programKey: c.programKey,
+            percent,
+            doneWeight,
+            totalWeight,
+            items
+        };
     }
 };
 exports.ReadinessService = ReadinessService;

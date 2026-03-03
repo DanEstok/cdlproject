@@ -49,6 +49,11 @@ enum TaskStatus {
   CANCELLED
 }
 
+enum ReadinessRequirementKind {
+  DOC_PRESENT
+  VERIFICATION_PASSED
+}
+
 enum NoteType {
   CASE_NOTE
   COACHING_NOTE
@@ -158,6 +163,7 @@ model Case {
   organizationId String
   clientPersonId String
   status         CaseStatus @default(OPEN)
+  programKey     String     @default("APACHE_DRIVEN_TRUCKING")
   openedAt       DateTime   @default(now())
   closedAt       DateTime?
   notes          String?
@@ -342,4 +348,24 @@ model AuditEvent {
   organization  Organization @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId, createdAt])
+}
+
+model ReadinessRequirement {
+  id             String                   @id @default(cuid())
+  organizationId String
+  programKey     String
+  kind           ReadinessRequirementKind
+  label          String
+  weight         Int                      @default(1)
+  enabled        Boolean                  @default(true)
+
+  // kind-specific fields:
+  docType            String?  // when kind = DOC_PRESENT
+  verificationType   String?  // when kind = VERIFICATION_PASSED
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, programKey])
+  @@index([organizationId, programKey, kind])
 }

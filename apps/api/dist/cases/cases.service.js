@@ -86,20 +86,16 @@ let CasesService = class CasesService {
         return updated;
     }
     async close(organizationId, actor, id) {
-        await this.get(organizationId, id);
-        const updated = await this.prisma.case.update({
+        return this.prisma.case.update({
             where: { id },
             data: { status: "CLOSED", closedAt: new Date() }
         });
-        await this.audit.write({
-            organizationId,
-            actorUserId: actor.userId,
-            actorClerkUserId: actor.clerkUserId,
-            action: "CASE_CLOSED",
-            entityType: "Case",
-            entityId: id
+    }
+    async setProgram(organizationId, caseId, programKey) {
+        return this.prisma.case.update({
+            where: { id: caseId },
+            data: { programKey }
         });
-        return updated;
     }
 };
 exports.CasesService = CasesService;

@@ -12,8 +12,8 @@ export declare class CasesService {
         client: {
             id: string;
             createdAt: Date;
-            organizationId: string;
             updatedAt: Date;
+            organizationId: string;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -28,15 +28,16 @@ export declare class CasesService {
         };
     } & {
         id: string;
-        createdAt: Date;
-        organizationId: string;
-        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
     }>;
     list(organizationId: string, params: {
         status?: string;
@@ -45,8 +46,8 @@ export declare class CasesService {
         client: {
             id: string;
             createdAt: Date;
-            organizationId: string;
             updatedAt: Date;
+            organizationId: string;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -61,22 +62,23 @@ export declare class CasesService {
         };
     } & {
         id: string;
-        createdAt: Date;
-        organizationId: string;
-        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
     })[]>;
     get(organizationId: string, id: string): Promise<{
         client: {
             id: string;
             createdAt: Date;
-            organizationId: string;
             updatedAt: Date;
+            organizationId: string;
             type: import("@prisma/client").$Enums.PersonType;
             firstName: string;
             lastName: string;
@@ -91,53 +93,66 @@ export declare class CasesService {
         };
         enrollments: {
             id: string;
+            status: import("@prisma/client").$Enums.EnrollmentStatus;
             organizationId: string;
             caseId: string;
-            status: import("@prisma/client").$Enums.EnrollmentStatus;
             programType: import("@prisma/client").$Enums.ProgramType;
             startedAt: Date;
             endedAt: Date | null;
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        organizationId: string;
-        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
     }>;
     update(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, id: string, dto: UpdateCaseDto): Promise<{
         id: string;
-        createdAt: Date;
-        organizationId: string;
-        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
     }>;
-    close(organizationId: string, actor: {
-        userId: string;
-        clerkUserId: string;
-    }, id: string): Promise<{
+    close(organizationId: string, actor: any, id: string): Promise<{
         id: string;
-        createdAt: Date;
-        organizationId: string;
-        clientPersonId: string;
         status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
         openedAt: Date;
         closedAt: Date | null;
         notes: string | null;
         primaryCaseManagerUserId: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
+    }>;
+    setProgram(organizationId: string, caseId: string, programKey: string): Promise<{
+        id: string;
+        status: import("@prisma/client").$Enums.CaseStatus;
+        programKey: string;
+        openedAt: Date;
+        closedAt: Date | null;
+        notes: string | null;
+        primaryCaseManagerUserId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        organizationId: string;
+        clientPersonId: string;
     }>;
 }

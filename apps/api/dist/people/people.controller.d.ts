@@ -5,8 +5,8 @@ export declare class PeopleController {
     constructor(people: PeopleService);
     create(req: any, dto: CreatePersonDto): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -22,8 +22,8 @@ export declare class PeopleController {
     }>;
     list(req: any, type?: string, search?: string): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -39,8 +39,8 @@ export declare class PeopleController {
     }[]>;
     get(req: any, id: string): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -56,8 +56,8 @@ export declare class PeopleController {
     }>;
     update(req: any, id: string, dto: UpdatePersonDto): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;

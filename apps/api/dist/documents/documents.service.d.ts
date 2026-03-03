@@ -24,6 +24,7 @@ export declare class DocumentsService {
     }, dto: CompleteDocumentDto): Promise<{
         id: string;
         organizationId: string;
+        createdAt: Date;
         caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
@@ -35,7 +36,6 @@ export declare class DocumentsService {
         docType: import("@prisma/client").$Enums.DocumentType;
         issueDate: Date | null;
         expiresAt: Date | null;
-        createdAt: Date;
     }>;
     list(organizationId: string, params: {
         caseId?: string;
@@ -43,6 +43,7 @@ export declare class DocumentsService {
     }): Promise<{
         id: string;
         organizationId: string;
+        createdAt: Date;
         caseId: string | null;
         personId: string | null;
         uploadedByUserId: string | null;
@@ -54,6 +55,5 @@ export declare class DocumentsService {
         docType: import("@prisma/client").$Enums.DocumentType;
         issueDate: Date | null;
         expiresAt: Date | null;
-        createdAt: Date;
     }[]>;
 }

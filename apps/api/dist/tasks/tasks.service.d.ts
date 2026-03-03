@@ -11,96 +11,96 @@ export declare class TasksService {
         clerkUserId: string;
     }, caseId: string, dto: CreateTaskDto): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     list(organizationId: string, caseId: string, params: {
         status?: string;
     }): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }[]>;
     myTasks(organizationId: string, userId: string, params: {
         status?: string;
     }): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }[]>;
     get(organizationId: string, id: string): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     update(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, id: string, dto: UpdateTaskDto): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
     complete(organizationId: string, actor: {
         userId: string;
         clerkUserId: string;
     }, id: string): Promise<{
         id: string;
+        organizationId: string;
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.TaskStatus;
+        caseId: string;
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
         description: string | null;
-        status: import("@prisma/client").$Enums.TaskStatus;
         dueAt: Date | null;
         completedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-        organizationId: string;
-        caseId: string;
     }>;
 }

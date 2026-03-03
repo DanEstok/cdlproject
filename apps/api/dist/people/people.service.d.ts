@@ -10,8 +10,8 @@ export declare class PeopleService {
         clerkUserId: string;
     }, dto: CreatePersonDto): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -30,8 +30,8 @@ export declare class PeopleService {
         search?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -47,8 +47,8 @@ export declare class PeopleService {
     }[]>;
     get(organizationId: string, id: string): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
@@ -67,8 +67,8 @@ export declare class PeopleService {
         clerkUserId: string;
     }, id: string, dto: UpdatePersonDto): Promise<{
         id: string;
-        createdAt: Date;
         organizationId: string;
+        createdAt: Date;
         updatedAt: Date;
         type: import("@prisma/client").$Enums.PersonType;
         firstName: string;
