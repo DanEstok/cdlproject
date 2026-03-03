@@ -83,7 +83,7 @@ export class NotesService {
     const updated = await this.prisma.note.update({
       where: { id },
       data: {
-        contentJson: dto.contentJson ?? note.contentJson,
+        contentJson: dto.contentJson ?? note.contentJson as any,
         narrative: dto.narrative ?? note.narrative
       }
     });

@@ -6,6 +6,8 @@ import { AuditModule } from "./audit/audit.module";
 import { PeopleModule } from "./people/people.module";
 import { CasesModule } from "./cases/cases.module";
 import { DocumentsModule } from "./documents/documents.module";
+import { TasksModule } from "./tasks/tasks.module";
+import { NotesModule } from "./notes/notes.module";
 import { JobsModule } from "./jobs/jobs.module";
 import { HealthController } from "./health.controller";
 
@@ -18,6 +20,8 @@ import { HealthController } from "./health.controller";
     PeopleModule,
     CasesModule,
     DocumentsModule,
+    TasksModule,
+    NotesModule,
     JobsModule,
   ],
   controllers: [HealthController]
