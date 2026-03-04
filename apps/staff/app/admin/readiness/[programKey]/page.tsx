@@ -5,10 +5,10 @@ import { Card, CardContent } from "../../../../components/ui/Card";
 import { Button } from "../../../../components/ui/Button";
 import { Textarea } from "../../../../components/ui/Textarea";
 
-export default async function ProgramReadinessPage({ params }: { params: { programKey: string } }) {
+export default async function ProgramReadinessPage({ params }: { params: Promise<{ programKey: string }> }) {
   await ensureProvisioned();
 
-  const programKey = decodeURIComponent(params.programKey);
+  const { programKey } = await params;
   const reqs = await apiFetch<any[]>(`/readiness/programs/${encodeURIComponent(programKey)}/requirements`);
 
   const initial = reqs.map((r: any) => ({

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { apiFetch, ensureProvisioned } from "../../../../lib/api";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   await ensureProvisioned();
 
-  await apiFetch(`/verifications/${params.id}/complete-from-evidence`, {
+  await apiFetch(`/verifications/${id}/complete-from-evidence`, {
     method: "POST"
   });
 

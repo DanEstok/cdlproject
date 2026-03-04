@@ -14,15 +14,17 @@ function verifTone(s: string) {
   return "neutral";
 }
 
-export default async function CasePage({ params }: { params: { id: string } }) {
+export default async function CaseDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await ensureProvisioned();
 
+  const { id } = await params;
+
   // Replace these with your real endpoints and types
-  const c = await apiFetch<any>(`/cases/${params.id}`);
-  const readiness = await apiFetch<any>(`/cases/${params.id}/readiness`);
-  const docs = await apiFetch<any[]>(`/documents?caseId=${params.id}`);
-  const verifs = await apiFetch<any[]>(`/cases/${params.id}/verifications`);
-  const timeline = await apiFetch<any[]>(`/cases/${params.id}/timeline`);
+  const c = await apiFetch<any>(`/cases/${id}`);
+  const readiness = await apiFetch<any>(`/cases/${id}/readiness`);
+  const docs = await apiFetch<any[]>(`/documents?caseId=${id}`);
+  const verifs = await apiFetch<any[]>(`/cases/${id}/verifications`);
+  const timeline = await apiFetch<any[]>(`/cases/${id}/timeline`);
   const programs = await apiFetch<any[]>(`/programs`);
   const enabledPrograms = programs.filter((p: any) => p.enabled);
 
@@ -47,7 +49,7 @@ export default async function CasePage({ params }: { params: { id: string } }) {
           <CardDesc>Changes the readiness checklist and scoring.</CardDesc>
         </CardHeader>
         <CardContent>
-          <form action={`/cases/${params.id}/program/set`} method="post" className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <form action={`/cases/${id}/program/set`} method="post" className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <select
               name="programKey"
               defaultValue={readiness.programKey}

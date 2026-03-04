@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { apiFetch, ensureProvisioned } from "../../../../lib/api";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   await ensureProvisioned();
 
   const form = await req.formData();
   const status = String(form.get("status") || "PENDING");
 
-  await apiFetch(`/verifications/${params.id}`, {
+  await apiFetch(`/verifications/${id}`, {
     method: "PATCH",
     body: JSON.stringify({ status })
   });

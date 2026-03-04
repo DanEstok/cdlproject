@@ -14,10 +14,10 @@ type Program = {
   enabled: boolean;
 };
 
-export default async function CloneProgramPage({ params }: { params: { programKey: string } }) {
+export default async function CloneProgramPage({ params }: { params: Promise<{ programKey: string }> }) {
   await ensureProvisioned();
 
-  const fromKey = decodeURIComponent(params.programKey);
+  const { programKey: fromKey } = await params;
   const programs = await apiFetch<Program[]>("/programs");
   const source = programs.find((p: Program) => p.programKey === fromKey);
 

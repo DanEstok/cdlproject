@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { ensureProvisioned, apiFetch } from "../../../../../../lib/api";
 
-export async function POST(req: Request, { params }: { params: { programKey: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ programKey: string }> }) {
   await ensureProvisioned();
 
-  const fromKey = decodeURIComponent(params.programKey);
+  const { programKey: fromKey } = await params;
   const form = await req.formData();
 
   const programKey = String(form.get("programKey") || "").trim();

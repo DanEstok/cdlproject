@@ -24,11 +24,11 @@ type Req = {
   verificationType?: string | null;
 };
 
-export default async function ProgramEditorPage({ params }: { params: { programKey: string } }) {
+export default async function ProgramEditorPage({ params }: { params: Promise<{ programKey: string }> }) {
   try {
     await ensureProvisioned();
 
-    const programKey = decodeURIComponent(params.programKey);
+    const { programKey } = await params;
     const programs = await apiFetch<Program[]>("/programs");
     const program = programs.find((p: Program) => p.programKey === programKey);
 
