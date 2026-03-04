@@ -11,4 +11,7 @@ export declare class AuthService {
     constructor(prisma: PrismaService);
     private getSigningKey;
     verifyAndLoadUser(bearerToken: string): Promise<AuthedUser>;
+    verifyTokenOnly(bearerToken: string): Promise<{
+        clerkUserId: string;
+    }>;
 }

@@ -6,6 +6,7 @@ export declare class TasksController {
     create(req: any, caseId: string, dto: CreateTaskDto): Promise<{
         id: string;
         organizationId: string;
+        description: string | null;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.TaskStatus;
@@ -13,13 +14,13 @@ export declare class TasksController {
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
-        description: string | null;
         dueAt: Date | null;
         completedAt: Date | null;
     }>;
     list(req: any, caseId: string, status?: string): Promise<{
         id: string;
         organizationId: string;
+        description: string | null;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.TaskStatus;
@@ -27,13 +28,13 @@ export declare class TasksController {
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
-        description: string | null;
         dueAt: Date | null;
         completedAt: Date | null;
     }[]>;
     my(req: any, status?: string): Promise<{
         id: string;
         organizationId: string;
+        description: string | null;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.TaskStatus;
@@ -41,13 +42,13 @@ export declare class TasksController {
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
-        description: string | null;
         dueAt: Date | null;
         completedAt: Date | null;
     }[]>;
     update(req: any, id: string, dto: UpdateTaskDto): Promise<{
         id: string;
         organizationId: string;
+        description: string | null;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.TaskStatus;
@@ -55,13 +56,13 @@ export declare class TasksController {
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
-        description: string | null;
         dueAt: Date | null;
         completedAt: Date | null;
     }>;
     complete(req: any, id: string): Promise<{
         id: string;
         organizationId: string;
+        description: string | null;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.TaskStatus;
@@ -69,7 +70,6 @@ export declare class TasksController {
         assignedToUserId: string | null;
         assignedToPersonId: string | null;
         title: string;
-        description: string | null;
         dueAt: Date | null;
         completedAt: Date | null;
     }>;

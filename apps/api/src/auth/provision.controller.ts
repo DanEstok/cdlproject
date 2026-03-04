@@ -1,5 +1,5 @@
 import { Controller, Post, Req, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "./auth.guard";
+import { ProvisionAuthGuard } from "./provision-auth.guard";
 import { PrismaService } from "../prisma/prisma.service";
 import { AuditService } from "../audit/audit.service";
 
@@ -21,7 +21,7 @@ export class ProvisionController {
   constructor(private prisma: PrismaService, private audit: AuditService) {}
 
   @Post("provision")
-  @UseGuards(AuthGuard)
+  @UseGuards(ProvisionAuthGuard)
   async provision(@Req() req: any) {
     const clerkUserId = req.user?.clerkUserId as string;
     if (!clerkUserId) throw new Error("Missing clerkUserId");

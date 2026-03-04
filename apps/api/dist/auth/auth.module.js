@@ -10,6 +10,7 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const auth_guard_1 = require("./auth.guard");
+const provision_auth_guard_1 = require("./provision-auth.guard");
 const prisma_module_1 = require("../prisma/prisma.module");
 const audit_module_1 = require("../audit/audit.module");
 const provision_controller_1 = require("./provision.controller");
@@ -19,8 +20,8 @@ exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [prisma_module_1.PrismaModule, audit_module_1.AuditModule],
-        providers: [auth_service_1.AuthService, auth_guard_1.AuthGuard],
-        exports: [auth_service_1.AuthService, auth_guard_1.AuthGuard],
+        providers: [auth_service_1.AuthService, auth_guard_1.AuthGuard, provision_auth_guard_1.ProvisionAuthGuard],
+        exports: [auth_service_1.AuthService, auth_guard_1.AuthGuard, provision_auth_guard_1.ProvisionAuthGuard],
         controllers: [provision_controller_1.ProvisionController]
     })
 ], AuthModule);

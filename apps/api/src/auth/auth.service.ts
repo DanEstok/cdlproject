@@ -55,6 +55,7 @@ export class AuthService {
 
     const user = await this.prisma.user.findUnique({ where: { clerkUserId } });
     if (!user || !user.isActive) {
+      // For provision endpoint, we allow unprovisioned users
       throw new UnauthorizedException("User not provisioned");
     }
 
@@ -64,5 +65,30 @@ export class AuthService {
       organizationId: user.organizationId,
       role: user.role
     };
+  }
+
+  async verifyTokenOnly(bearerToken: string): Promise<{ clerkUserId: string }> {
+    const token = bearerToken.replace(/^Bearer\s+/i, "").trim();
+    if (!token) throw new UnauthorizedException("Missing token");
+
+    const decodedHeader = jwt.decode(token, { complete: true });
+    const kid = decodedHeader && typeof decodedHeader === "object" ? decodedHeader.header.kid : null;
+    if (!kid) throw new UnauthorizedException("Invalid token header");
+
+    const signingKey = await this.getSigningKey(kid);
+
+    let payload: any;
+    try {
+      payload = jwt.verify(token, signingKey, {
+        issuer: process.env.CLERK_ISSUER
+      });
+    } catch (e) {
+      throw new UnauthorizedException("Invalid token");
+    }
+
+    const clerkUserId = payload?.sub;
+    if (!clerkUserId) throw new UnauthorizedException("Missing sub");
+
+    return { clerkUserId };
   }
 }

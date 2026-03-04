@@ -26,11 +26,11 @@ export declare class CasesController {
     } & {
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;
@@ -57,11 +57,11 @@ export declare class CasesController {
     } & {
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;
@@ -97,11 +97,11 @@ export declare class CasesController {
     } & {
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;
@@ -110,11 +110,11 @@ export declare class CasesController {
     update(req: any, id: string, dto: UpdateCaseDto): Promise<{
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;
@@ -140,11 +140,11 @@ export declare class CasesController {
     }): Promise<{
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;
@@ -153,11 +153,11 @@ export declare class CasesController {
     close(req: any, id: string): Promise<{
         id: string;
         organizationId: string;
+        programKey: string;
         createdAt: Date;
         updatedAt: Date;
-        notes: string | null;
         status: import("@prisma/client").$Enums.CaseStatus;
-        programKey: string;
+        notes: string | null;
         openedAt: Date;
         closedAt: Date | null;
         primaryCaseManagerUserId: string | null;

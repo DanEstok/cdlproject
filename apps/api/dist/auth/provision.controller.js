@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProvisionController = void 0;
 const common_1 = require("@nestjs/common");
-const auth_guard_1 = require("./auth.guard");
+const provision_auth_guard_1 = require("./provision-auth.guard");
 const prisma_service_1 = require("../prisma/prisma.service");
 const audit_service_1 = require("../audit/audit.service");
 let ProvisionController = class ProvisionController {
@@ -55,7 +55,7 @@ let ProvisionController = class ProvisionController {
 exports.ProvisionController = ProvisionController;
 __decorate([
     (0, common_1.Post)("provision"),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.UseGuards)(provision_auth_guard_1.ProvisionAuthGuard),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

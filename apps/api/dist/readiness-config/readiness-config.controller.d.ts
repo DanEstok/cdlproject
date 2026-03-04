@@ -12,13 +12,13 @@ export declare class ReadinessConfigController {
     getReqs(req: any, programKey: string): Promise<{
         id: string;
         organizationId: string;
+        programKey: string;
+        enabled: boolean;
         createdAt: Date;
         updatedAt: Date;
-        programKey: string;
         kind: import("@prisma/client").$Enums.ReadinessRequirementKind;
         label: string;
         weight: number;
-        enabled: boolean;
         docType: string | null;
         verificationType: string | null;
     }[]>;

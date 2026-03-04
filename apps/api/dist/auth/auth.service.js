@@ -70,6 +70,29 @@ let AuthService = class AuthService {
             role: user.role
         };
     }
+    async verifyTokenOnly(bearerToken) {
+        const token = bearerToken.replace(/^Bearer\s+/i, "").trim();
+        if (!token)
+            throw new common_1.UnauthorizedException("Missing token");
+        const decodedHeader = jsonwebtoken_1.default.decode(token, { complete: true });
+        const kid = decodedHeader && typeof decodedHeader === "object" ? decodedHeader.header.kid : null;
+        if (!kid)
+            throw new common_1.UnauthorizedException("Invalid token header");
+        const signingKey = await this.getSigningKey(kid);
+        let payload;
+        try {
+            payload = jsonwebtoken_1.default.verify(token, signingKey, {
+                issuer: process.env.CLERK_ISSUER
+            });
+        }
+        catch (e) {
+            throw new common_1.UnauthorizedException("Invalid token");
+        }
+        const clerkUserId = payload?.sub;
+        if (!clerkUserId)
+            throw new common_1.UnauthorizedException("Missing sub");
+        return { clerkUserId };
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

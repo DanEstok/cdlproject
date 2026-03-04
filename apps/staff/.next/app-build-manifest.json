@@ -19,6 +19,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/documents/[id]/download/route.js"
+    ],
+    "/admin/programs/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/programs/page.js"
     ]
   }
 }
