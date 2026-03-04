@@ -1,23 +1,21 @@
-import React from "react";
+import { cn } from "./cn";
 
-interface PageHeaderProps {
+export function PageHeader({
+  title,
+  subtitle,
+  actions
+}: {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
-  children?: React.ReactNode;
-}
-
-export function PageHeader({ title, subtitle, actions, children }: PageHeaderProps) {
+}) {
   return (
-    <div className="mb-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-slate-900">{title}</h1>
-          {subtitle && <p className="text-sm text-slate-600 mt-1">{subtitle}</p>}
-        </div>
-        {actions && <div className="flex items-center gap-3">{actions}</div>}
+    <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div>
+        <h1 className="text-2xl font-semibold leading-tight">{title}</h1>
+        {subtitle ? <p className="mt-1 text-sm text-slate-600">{subtitle}</p> : null}
       </div>
-      {children}
+      {actions ? <div className={cn("flex items-center gap-2 flex-wrap")}>{actions}</div> : null}
     </div>
   );
 }

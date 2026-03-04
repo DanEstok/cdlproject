@@ -2,6 +2,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { ensureProvisioned } from "../lib/api";
 import { Card, CardContent } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
+import Link from "next/link";
 
 export default async function Page() {
   return (
@@ -38,13 +39,13 @@ async function ProvisionBlock() {
       </div>
       <div className="flex flex-col space-y-3">
         <Button variant="secondary" asChild>
-          <a href="/cases">Cases</a>
+          <Link href="/cases">Cases</Link>
         </Button>
         <Button variant="secondary" asChild>
-          <a href="/tasks">My Tasks</a>
+          <Link href="/tasks">My Tasks</Link>
         </Button>
         <Button variant="secondary" asChild>
-          <a href="/admin/programs">Admin Programs</a>
+          <Link href="/admin/programs">Admin Programs</Link>
         </Button>
       </div>
     </div>

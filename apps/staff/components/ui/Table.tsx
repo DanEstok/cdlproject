@@ -1,81 +1,25 @@
-import React from "react";
+import { cn } from "./cn";
 
-interface TableProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function Table({ children, className = "" }: TableProps) {
+export function Table({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className={`overflow-hidden rounded-lg border border-slate-200 ${className}`}>
-      <table className="min-w-full divide-y divide-slate-200">
-        {children}
-      </table>
+    <div className="w-full overflow-x-auto rounded-2xl border border-slate-200">
+      <table className={cn("w-full border-collapse bg-white", className)} {...props} />
     </div>
   );
 }
 
-interface TableHeaderProps {
-  children: React.ReactNode;
-  className?: string;
+export function THead({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
+  return <thead className={cn("bg-slate-50 text-slate-600", className)} {...props} />;
 }
 
-export function TableHeader({ children, className = "" }: TableHeaderProps) {
-  return (
-    <thead className={`bg-slate-50 ${className}`}>
-      <tr>{children}</tr>
-    </thead>
-  );
+export function TH({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
+  return <th className={cn("px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide", className)} {...props} />;
 }
 
-interface TableHeaderCellProps {
-  children: React.ReactNode;
-  className?: string;
+export function TR({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) {
+  return <tr className={cn("border-t border-slate-200 hover:bg-slate-50", className)} {...props} />;
 }
 
-export function TableHeaderCell({ children, className = "" }: TableHeaderCellProps) {
-  return (
-    <th className={`px-4 py-3 text-left text-xs font-medium text-slate-600 uppercase tracking-wider ${className}`}>
-      {children}
-    </th>
-  );
-}
-
-interface TableBodyProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function TableBody({ children, className = "" }: TableBodyProps) {
-  return (
-    <tbody className={`bg-white divide-y divide-slate-200 ${className}`}>
-      {children}
-    </tbody>
-  );
-}
-
-interface TableRowProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function TableRow({ children, className = "" }: TableRowProps) {
-  return (
-    <tr className={`hover:bg-slate-50 ${className}`}>
-      {children}
-    </tr>
-  );
-}
-
-interface TableCellProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function TableCell({ children, className = "" }: TableCellProps) {
-  return (
-    <td className={`px-4 py-3 text-sm text-slate-900 ${className}`}>
-      {children}
-    </td>
-  );
+export function TD({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
+  return <td className={cn("px-4 py-3 text-sm", className)} {...props} />;
 }

@@ -1,8 +1,10 @@
 import { ensureProvisioned, apiFetch } from "../../../lib/api";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Card, CardContent, CardHeader } from "../../../components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { Badge } from "../../../components/ui/Badge";
+import { Input } from "../../../components/ui/Input";
+import { Textarea } from "../../../components/ui/Textarea";
 
 type Program = {
   programKey: string;
@@ -37,34 +39,31 @@ export default async function ProgramsAdminPage() {
             <form action="/admin/programs/create" method="post" className="space-y-4 max-w-lg">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  Program Key (UPPERCASE_WITH_UNDERSCORES)
+                  Program Key (UPPERCASE_WITH_UNDERSCOREES)
                 </label>
-                <input 
+                <Input 
                   name="programKey" 
                   placeholder="APACHE_DRIVEN_TRUCKING" 
                   required 
-                  className="w-full h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700">
                   Display Name
                 </label>
-                <input 
+                <Input 
                   name="displayName" 
                   placeholder="Apache Driven Trucker Pathway" 
                   required 
-                  className="w-full h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                 />
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700">
                   Description (optional)
                 </label>
-                <textarea 
+                <Textarea 
                   name="description" 
                   rows={3} 
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
                 />
               </div>
               <Button type="submit">Create Program</Button>
@@ -83,7 +82,7 @@ export default async function ProgramsAdminPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h4 className="text-lg font-semibold text-slate-900">{p.displayName}</h4>
-                        <Badge variant={p.enabled ? "success" : "neutral"}>
+                        <Badge tone={p.enabled ? "ok" : "neutral"}>
                           {p.enabled ? "Enabled" : "Disabled"}
                         </Badge>
                       </div>
