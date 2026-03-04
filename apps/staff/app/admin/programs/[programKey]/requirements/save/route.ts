@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ensureProvisioned, apiFetch } from "../../../../lib/api";
+import { ensureProvisioned, apiFetch } from "../../../../../../lib/api";
 
 export async function POST(req: Request, { params }: { params: { programKey: string } }) {
   await ensureProvisioned();
@@ -16,12 +16,12 @@ export async function POST(req: Request, { params }: { params: { programKey: str
     return new Response(`Invalid JSON payload: ${e.message}`, { status: 400 });
   }
 
-  // Basic server-side sanity: remove blank labels
+  // mild normalization
   items = items
     .map((i) => ({
       kind: i.kind,
       label: String(i.label || "").trim(),
-      weight: Number(i.weight || 1),
+      weight: Math.max(1, Math.min(10, Number(i.weight || 1))),
       enabled: Boolean(i.enabled),
       docType: i.docType ?? null,
       verificationType: i.verificationType ?? null

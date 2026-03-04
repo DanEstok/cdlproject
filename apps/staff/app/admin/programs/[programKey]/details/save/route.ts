@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ensureProvisioned, apiFetch } from "../../../../lib/api";
+import { ensureProvisioned, apiFetch } from "../../../../../../lib/api";
 
 export async function POST(req: Request, { params }: { params: { programKey: string } }) {
   await ensureProvisioned();

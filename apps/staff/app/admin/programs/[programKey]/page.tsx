@@ -1,4 +1,11 @@
+import Link from "next/link";
 import { ensureProvisioned, apiFetch } from "../../../../lib/api";
+import { PageHeader } from "../../../../components/ui/PageHeader";
+import { Card, CardHeader, CardTitle, CardDesc, CardContent } from "../../../../components/ui/Card";
+import { Input } from "../../../../components/ui/Input";
+import { Textarea } from "../../../../components/ui/Textarea";
+import { Button } from "../../../../components/ui/Button";
+import { Badge } from "../../../../components/ui/Badge";
 import { RequirementsEditor } from "../../../../components/RequirementsEditor";
 
 type Program = {
@@ -23,7 +30,7 @@ export default async function ProgramEditorPage({ params }: { params: { programK
 
     const programKey = decodeURIComponent(params.programKey);
     const programs = await apiFetch<Program[]>("/programs");
-    const program = programs.find((p) => p.programKey === programKey);
+    const program = programs.find((p: Program) => p.programKey === programKey);
 
     if (!program) {
       return (
@@ -40,8 +47,7 @@ export default async function ProgramEditorPage({ params }: { params: { programK
     }
 
     const reqs = await apiFetch<any[]>(`/readiness/programs/${encodeURIComponent(programKey)}/requirements`);
-
-    const initial: Req[] = reqs.map((r) => ({
+    const initial: Req[] = reqs.map((r: any) => ({
       kind: r.kind,
       label: r.label,
       weight: r.weight,
@@ -51,32 +57,82 @@ export default async function ProgramEditorPage({ params }: { params: { programK
     }));
 
     return (
-      <div style={{ padding: 24, maxWidth: 1000 }}>
-        <a href="/admin/programs">← Back</a>
-        <h2 style={{ marginTop: 12 }}>{program.displayName || programKey}</h2>
-        <div style={{ fontSize: 13, opacity: 0.8 }}>{programKey}</div>
-        {program.description ? <p style={{ opacity: 0.85 }}>{program.description}</p> : null}
-
-        <section style={{ marginTop: 16, border: "1px solid #ddd", padding: 12 }}>
-          <h3 style={{ marginTop: 0 }}>Program details</h3>
-          <form action={`/admin/programs/${encodeURIComponent(programKey)}/details/save`} method="post" style={{ display: "grid", gap: 10, maxWidth: 600 }}>
-            <label style={{ display: "grid", gap: 6 }}>
-              Display name
-              <input name="displayName" defaultValue={program.displayName || programKey} />
-            </label>
-            <label style={{ display: "grid", gap: 6 }}>
-              Description
-              <textarea name="description" rows={3} defaultValue={program.description || ""} />
-            </label>
-            <button type="submit">Save details</button>
-          </form>
-        </section>
-
-        <RequirementsEditor
-          programKey={programKey}
-          initial={initial}
-          saveAction={`/admin/programs/${encodeURIComponent(programKey)}/requirements/save`}
+      <div className="space-y-6">
+        <PageHeader
+          title={program?.displayName || programKey}
+          subtitle={program ? program.programKey : programKey}
+          actions={
+            <>
+              <Link href="/admin/programs">
+                <Button variant="secondary">Back</Button>
+              </Link>
+              <Link href={`/admin/programs/${encodeURIComponent(programKey)}/clone`}>
+                <Button variant="secondary">Clone</Button>
+              </Link>
+            </>
+          }
         />
+
+        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-4">
+          {/* Program details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Program details</CardTitle>
+              <CardDesc>Displayed to staff in the program selector.</CardDesc>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge tone={program?.enabled ? "ok" : "neutral"}>{program?.enabled ? "Enabled" : "Disabled"}</Badge>
+                <Badge tone="info">{programKey}</Badge>
+              </div>
+
+              <form
+                action={`/admin/programs/${encodeURIComponent(programKey)}/details/save`}
+                method="post"
+                className="space-y-4"
+              >
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Display name</label>
+                  <Input name="displayName" defaultValue={program?.displayName || programKey} />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea name="description" rows={5} defaultValue={program?.description || ""} />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button type="submit" variant="primary">Save details</Button>
+                  <Link href="/admin/programs">
+                    <Button type="button" variant="secondary">Done</Button>
+                  </Link>
+                </div>
+              </form>
+
+              <div className="rounded-2xl border border-slate-200 p-4 text-sm text-slate-700">
+                <div className="font-semibold">Tip</div>
+                <div className="mt-1 text-slate-600">
+                  Keep labels short and specific. Requirements should be evidence-driven and auditable.
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Requirements editor */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Readiness requirements</CardTitle>
+              <CardDesc>Add, reorder, enable/disable, and weight checklist items.</CardDesc>
+            </CardHeader>
+            <CardContent>
+              <RequirementsEditor
+                programKey={programKey}
+                initial={initial}
+                saveAction={`/admin/programs/${encodeURIComponent(programKey)}/requirements/save`}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   } catch (error) {

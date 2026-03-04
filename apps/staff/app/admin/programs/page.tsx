@@ -1,10 +1,11 @@
+import Link from "next/link";
 import { ensureProvisioned, apiFetch } from "../../../lib/api";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/Card";
+import { Card, CardHeader, CardTitle, CardDesc, CardContent } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
-import { Badge } from "../../../components/ui/Badge";
 import { Input } from "../../../components/ui/Input";
 import { Textarea } from "../../../components/ui/Textarea";
+import { Badge } from "../../../components/ui/Badge";
 
 type Program = {
   programKey: string;
@@ -14,136 +15,114 @@ type Program = {
 };
 
 export default async function ProgramsAdminPage() {
-  try {
-    await ensureProvisioned();
-    const programs = await apiFetch<Program[]>("/programs");
+  await ensureProvisioned();
+  const programs = await apiFetch<Program[]>("/programs");
 
-    return (
-      <div className="space-y-6">
-        <PageHeader 
-          title="Programs" 
-          subtitle="Programs control which readiness checklist applies to a case. Create one, clone one, then edit its requirements."
-          actions={
-            <Button asChild>
-              <a href="/admin/programs/create">Create Program</a>
-            </Button>
-          }
-        />
+  const enabledCount = programs.filter((p: Program) => p.enabled).length;
 
-        {/* Create Program Card */}
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Programs"
+        subtitle={`${enabledCount} enabled • ${programs.length} total`}
+        actions={
+          <Link href="/cases">
+            <Button variant="secondary">Back to cases</Button>
+          </Link>
+        }
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-4">
+        {/* Create */}
         <Card>
           <CardHeader>
-            <h3 className="text-lg font-semibold text-slate-900">Create New Program</h3>
+            <CardTitle>Create program</CardTitle>
+            <CardDesc>Programs control readiness requirements and case scoring.</CardDesc>
           </CardHeader>
           <CardContent>
-            <form action="/admin/programs/create" method="post" className="space-y-4 max-w-lg">
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  Program Key (UPPERCASE_WITH_UNDERSCOREES)
-                </label>
-                <Input 
-                  name="programKey" 
-                  placeholder="APACHE_DRIVEN_TRUCKING" 
-                  required 
-                />
+            <form action="/admin/programs/create" method="post" className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Program key</label>
+                <div className="text-xs text-slate-600 mb-2">
+                  Use uppercase with underscores, example: <span className="font-mono">APACHE_DRIVEN_TRUCKING</span>
+                </div>
+                <Input name="programKey" placeholder="APACHE_DRIVEN_TRUCKING" required />
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  Display Name
-                </label>
-                <Input 
-                  name="displayName" 
-                  placeholder="Apache Driven Trucker Pathway" 
-                  required 
-                />
+
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Display name</label>
+                <Input name="displayName" placeholder="Apache Driven Trucker Pathway" required />
               </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  Description (optional)
-                </label>
-                <Textarea 
-                  name="description" 
-                  rows={3} 
-                />
+
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Description</label>
+                <Textarea name="description" rows={4} placeholder="Optional short description shown to staff." />
               </div>
-              <Button type="submit">Create Program</Button>
+
+              <Button type="submit" variant="primary">Create program</Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Existing Programs */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-slate-900">Existing Programs</h3>
-          <div className="grid gap-4">
-            {programs.map((p) => (
-              <Card key={p.programKey}>
-                <CardContent className="p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="text-lg font-semibold text-slate-900">{p.displayName}</h4>
-                        <Badge tone={p.enabled ? "ok" : "neutral"}>
-                          {p.enabled ? "Enabled" : "Disabled"}
-                        </Badge>
+        {/* List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Existing programs</CardTitle>
+            <CardDesc>Edit requirements, clone, or disable programs.</CardDesc>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {programs.map((p: Program) => (
+              <div key={p.programKey} className="rounded-2xl border border-slate-200 p-4">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <div className="text-sm font-semibold">{p.displayName}</div>
+                      <Badge tone={p.enabled ? "ok" : "neutral"}>{p.enabled ? "Enabled" : "Disabled"}</Badge>
+                    </div>
+
+                    <div className="mt-1 text-xs text-slate-600 font-mono">
+                      {p.programKey}
+                    </div>
+
+                    {p.description ? (
+                      <div className="mt-2 text-sm text-slate-700">
+                        {p.description}
                       </div>
-                      <p className="text-sm text-slate-600 mb-1">{p.programKey}</p>
-                      {p.description && (
-                        <p className="text-sm text-slate-600">{p.description}</p>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button variant="secondary" asChild>
-                        <a href={`/admin/programs/${encodeURIComponent(p.programKey)}`}>Edit</a>
-                      </Button>
-                      
-                      <form action={`/admin/programs/${encodeURIComponent(p.programKey)}/toggle`} method="post">
-                        <input type="hidden" name="enabled" value={p.enabled ? "false" : "true"} />
-                        <Button variant="secondary" type="submit">
-                          {p.enabled ? "Disable" : "Enable"}
-                        </Button>
-                      </form>
-
-                      <Button variant="secondary" asChild>
-                        <a href={`/admin/programs/${encodeURIComponent(p.programKey)}/clone`}>Clone</a>
-                      </Button>
-                    </div>
+                    ) : (
+                      <div className="mt-2 text-sm text-slate-600">
+                        No description.
+                      </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link href={`/admin/programs/${encodeURIComponent(p.programKey)}`}>
+                      <Button size="sm" variant="secondary">Edit</Button>
+                    </Link>
+
+                    <Link href={`/admin/programs/${encodeURIComponent(p.programKey)}/clone`}>
+                      <Button size="sm" variant="secondary">Clone</Button>
+                    </Link>
+
+                    <form action={`/admin/programs/${encodeURIComponent(p.programKey)}/toggle`} method="post">
+                      <input type="hidden" name="enabled" value={p.enabled ? "false" : "true"} />
+                      <Button size="sm" variant={p.enabled ? "ghost" : "primary"}>
+                        {p.enabled ? "Disable" : "Enable"}
+                      </Button>
+                    </form>
+                  </div>
+                </div>
+              </div>
             ))}
-          </div>
-        </div>
+
+            {programs.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-300 p-6 text-sm text-slate-600">
+                No programs found yet. Create one to get started.
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
       </div>
-    );
-  } catch (error) {
-    if (error instanceof Error && error.message === "No auth token") {
-      return (
-        <div className="p-6 max-w-md">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Authentication Required</h2>
-          <p className="text-slate-600 mb-4">
-            You need to be logged in to access the admin programs page.
-          </p>
-          <Button asChild>
-            <a href="/">Return to home page to log in</a>
-          </Button>
-        </div>
-      );
-    }
-    
-    return (
-      <div className="p-6 max-w-md">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Error</h2>
-        <p className="text-slate-600 mb-4">
-          An error occurred while loading the programs page.
-        </p>
-        <p className="text-sm text-slate-500 mb-4">
-          {error instanceof Error ? error.message : "Unknown error"}
-        </p>
-        <Button asChild>
-          <a href="/cases">← Back to cases</a>
-        </Button>
-      </div>
-    );
-  }
+    </div>
+  );
 }
