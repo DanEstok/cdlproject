@@ -1,6 +1,12 @@
 import { ensureProvisioned, apiFetch } from "../../../lib/api";
 import { auth } from "@clerk/nextjs/server";
 import { DocumentUploader } from "../../../components/DocumentUploader";
+import { PageHeader } from "../../../components/ui/PageHeader";
+import { Card, CardContent, CardHeader } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Badge, StatusBadge } from "../../../components/ui/Badge";
+import { DataList, DataListItem } from "../../../components/ui/DataList";
+import { Table, TableHeader, TableHeaderCell, TableBody, TableRow, TableCell } from "../../../components/ui/Table";
 
 type Case = {
   id: string;
@@ -48,19 +54,23 @@ type Verification = {
 
 type TimelineItem = {
   at: string;
-  kind: "TASK" | "NOTE" | "DOCUMENT" | "VERIFICATION" | "AUDIT";
-  title: string;
-  subtitle?: string;
+  kind: "TASK" | "NOTE" | "DOCUMENT" | "VERIFICATION";
   refId: string;
+  title: string;
+  description?: string | null;
 };
 
 type Readiness = {
-  caseId: string;
-  programKey: string;
+  programKey: string | null;
   percent: number;
   doneWeight: number;
   totalWeight: number;
-  items: { id: string; key: string; label: string; kind: string; weight: number; ok: boolean }[];
+  items: Array<{
+    key: string;
+    label: string;
+    ok: boolean;
+    weight: number;
+  }>;
 };
 
 export default async function CasePage({ params }: { params: { id: string } }) {
@@ -80,287 +90,252 @@ export default async function CasePage({ params }: { params: { id: string } }) {
   const session = await auth();
   const token = await session.getToken();
   if (!token) {
-    return <div style={{ padding: 24 }}>Not authenticated.</div>;
+    return <div className="p-6">Not authenticated.</div>;
   }
 
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL!;
   if (!apiBase) {
-    return <div style={{ padding: 24 }}>Missing NEXT_PUBLIC_API_BASE_URL</div>;
+    return <div className="p-6">Missing NEXT_PUBLIC_API_BASE_URL</div>;
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <a href="/cases">← Back to cases</a>
-
-      <h2 style={{ marginTop: 12 }}>
-        Case: {c.client.firstName} {c.client.lastName}
-      </h2>
-
-      <div style={{ marginTop: 8 }}>
-        <strong>Status:</strong> {c.status}
-      </div>
-
-      <section style={{ marginTop: 20, border: "1px solid #ddd", padding: 12 }}>
-        <h3 style={{ marginTop: 0 }}>Readiness</h3>
-        <div style={{ fontSize: 18 }}>
-          <strong>{readiness.percent}%</strong> ({readiness.doneWeight}/{readiness.totalWeight})
-        </div>
-        <ul style={{ marginTop: 10 }}>
-          {readiness.items.map((i) => (
-            <li key={i.key} style={{ opacity: i.ok ? 1 : 0.6 }}>
-              {i.ok ? "✅" : "⬜"} {i.label}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section style={{ marginTop: 16, border: "1px solid #ddd", padding: 12 }}>
-        <h3 style={{ marginTop: 0 }}>Program</h3>
-
-        <form action={`/cases/${params.id}/program/set`} method="post" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <select name="programKey" defaultValue={readiness.programKey}>
-            {enabledPrograms.map((p) => (
-              <option key={p.programKey} value={p.programKey}>
-                {p.displayName}
-              </option>
-            ))}
-          </select>
-          <button type="submit">Set Program</button>
-        </form>
-
-        <div style={{ marginTop: 8, fontSize: 13, opacity: 0.85 }}>
-          Readiness checklist and scoring update based on the selected program.
-        </div>
-      </section>
-
-      {/* TIMELINE */}
-      <section style={{ marginTop: 20 }}>
-        <h3>Timeline</h3>
-        <ul style={{ marginTop: 12 }}>
-          {timeline.map((i) => (
-            <li key={`${i.kind}-${i.refId}`} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <strong>{i.kind}</strong> | {new Date(i.at).toLocaleString()}
-                  <div style={{ marginTop: 4 }}>
-                    <strong>{i.title}</strong>
-                  </div>
-                  {i.subtitle ? <div style={{ marginTop: 4, fontSize: 13, opacity: 0.85 }}>{i.subtitle}</div> : null}
-                </div>
-
-                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                  {i.kind === "DOCUMENT" ? <a href={`/documents/${i.refId}/download`}>Download</a> : null}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* DOCUMENTS */}
-      <section style={{ marginTop: 20 }}>
-        <h3>Documents</h3>
-        <DocumentUploader
-        apiBase={apiBase}
-        token={token}
-        caseId={params.id}
-        clientPersonId={c.clientPersonId}
+    <div className="space-y-6">
+      <PageHeader 
+        title={`Case: ${c.client.firstName} ${c.client.lastName}`}
+        subtitle={`Case ID: ${c.id}`}
+        actions={
+          <div className="flex items-center gap-3">
+            <StatusBadge status={c.status} />
+            <Button asChild>
+              <a href="/cases">← Back to Cases</a>
+            </Button>
+          </div>
+        }
       />
 
-        <ul style={{ marginTop: 12 }}>
-          {docs.map((d) => (
-            <li key={d.id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <strong>{d.fileName}</strong>
-                  <div style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>
-                    Type: {d.docType} | Uploaded: {new Date(d.createdAt).toLocaleString()}
-                    {d.issueDate ? ` | Issue: ${new Date(d.issueDate).toLocaleDateString()}` : ""}
-                    {d.expiresAt ? ` | Expires: ${new Date(d.expiresAt).toLocaleDateString()}` : ""}
-                  </div>
+      {/* Summary Strip */}
+      <Card>
+        <CardContent className="py-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-900">{readiness.percent}%</div>
+              <div className="text-sm text-slate-600">Readiness</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-900">{tasks.length}</div>
+              <div className="text-sm text-slate-600">Tasks</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-900">{docs.length}</div>
+              <div className="text-sm text-slate-600">Documents</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-slate-900">{verifs.length}</div>
+              <div className="text-sm text-slate-600">Verifications</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Wider */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Readiness Card */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-slate-900">Readiness Checklist</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-700">Progress</span>
+                  <span className="text-sm font-bold text-slate-900">
+                    {readiness.doneWeight}/{readiness.totalWeight} ({readiness.percent}%)
+                  </span>
                 </div>
-                <div>
-                  <a href={`/documents/${d.id}/download`}>Download</a>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full" 
+                    style={{ width: `${readiness.percent}%` }}
+                  ></div>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* VERIFICATIONS */}
-      <section style={{ marginTop: 28 }}>
-        <h3>Verifications</h3>
-
-        <form
-          action={`/cases/${params.id}/verifications/create`}
-          method="post"
-          style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}
-        >
-          <select name="type" defaultValue="DOT_MEDICAL">
-            <option value="DOT_MEDICAL">DOT_MEDICAL</option>
-            <option value="MVR">MVR</option>
-            <option value="CLEARINGHOUSE">CLEARINGHOUSE</option>
-          </select>
-
-          <select name="status" defaultValue="PENDING">
-            <option value="PENDING">PENDING</option>
-            <option value="PASSED">PASSED</option>
-            <option value="FAILED">FAILED</option>
-            <option value="UNKNOWN">UNKNOWN</option>
-          </select>
-
-          <input name="nextDueAt" placeholder="Next due ISO (optional)" />
-          <input name="notes" placeholder="Notes (optional)" />
-
-          <select name="evidenceDocumentId" defaultValue="">
-            <option value="">Evidence (optional)</option>
-            {docs.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.docType}: {d.fileName}
-              </option>
-            ))}
-          </select>
-
-          <button type="submit">Add Verification</button>
-        </form>
-
-        <ul style={{ marginTop: 12 }}>
-          {verifs.map((v) => (
-            <li key={v.id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <strong>{v.type}</strong> | {v.status}
-                  <div style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>
-                    Created: {new Date(v.createdAt).toLocaleString()}
-                    {v.verifiedAt ? ` | Verified: ${new Date(v.verifiedAt).toLocaleString()}` : ""}
-                    {v.nextDueAt ? ` | Next due: ${new Date(v.nextDueAt).toLocaleString()}` : ""}
-                  </div>
-                  {v.notes ? <div style={{ marginTop: 6, fontSize: 13 }}>{v.notes}</div> : null}
-                  
-                  <div style={{ marginTop: 10, display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                    <form action={`/verifications/${v.id}/evidence`} method="post" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                      <select name="evidenceDocumentId" defaultValue={v.evidenceDocumentId || ""}>
-                        <option value="">No evidence</option>
-                        {docs.map((d) => (
-                          <option key={d.id} value={d.id}>
-                            {d.docType}: {d.fileName}
-                          </option>
-                        ))}
-                      </select>
-
-                      <button type="submit">Save Evidence</button>
-                    </form>
-
-                    {v.evidenceDocumentId ? (
-                      <a href={`/documents/${v.evidenceDocumentId}/download`}>View evidence</a>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <form action={`/verifications/${v.id}/set`} method="post">
-                    <input type="hidden" name="status" value="PASSED" />
-                    <button type="submit">PASS</button>
-                  </form>
-                  <form action={`/verifications/${v.id}/set`} method="post">
-                    <input type="hidden" name="status" value="FAILED" />
-                    <button type="submit">FAIL</button>
-                  </form>
-                  <form action={`/verifications/${v.id}/set`} method="post">
-                    <input type="hidden" name="status" value="PENDING" />
-                    <button type="submit">PENDING</button>
-                  </form>
-                  <form action={`/verifications/${v.id}/complete-from-evidence`} method="post">
-                    <button type="submit" disabled={!v.evidenceDocumentId}>
-                      Complete from evidence
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* TASKS */}
-      <section style={{ marginTop: 28 }}>
-        <h3>Tasks</h3>
-        <CreateTaskForm caseId={params.id} />
-        <ul style={{ marginTop: 12 }}>
-          {tasks.map((t) => (
-            <li key={t.id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
-              <div>
-                <strong>{t.title}</strong>
-              </div>
-              <div style={{ fontSize: 12 }}>
-                {t.status} {t.dueAt ? `| Due: ${new Date(t.dueAt).toLocaleString()}` : ""}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* NOTES */}
-      <section style={{ marginTop: 28 }}>
-        <h3>Notes</h3>
-        <CreateNoteForm caseId={params.id} />
-        <ul style={{ marginTop: 12 }}>
-          {notes.map((n) => (
-            <li key={n.id} style={{ border: "1px solid #ddd", padding: 10, marginBottom: 6 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-                <div>
-                  <strong>{n.noteType}</strong> | {n.status} | {new Date(n.createdAt).toLocaleString()}
-                  <div style={{ fontSize: 13, marginTop: 6 }}>{n.narrative || ""}</div>
-                  {n.templateKey?.startsWith("ADDENDUM:") ? (
-                    <div style={{ fontSize: 12, marginTop: 4, opacity: 0.8 }}>
-                      {`Linked to ${n.templateKey.replace("ADDENDUM:", "")}`}
+                <div className="space-y-2">
+                  {readiness.items.map((i) => (
+                    <div key={i.key} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                      <span className="text-lg">{i.ok ? "✅" : "⬜"}</span>
+                      <span className={`text-sm ${i.ok ? "text-slate-900" : "text-slate-500"}`}>
+                        {i.label}
+                      </span>
+                      <span className="text-xs text-slate-400 ml-auto">({i.weight})</span>
                     </div>
-                  ) : null}
-                </div>
-
-                <div style={{ display: "flex", gap: 8 }}>
-                  <form action={`/notes/${n.id}/sign`} method="post">
-                    <button type="submit" disabled={n.status === "SIGNED"}>
-                      Sign
-                    </button>
-                  </form>
-
-                  <form action={`/notes/${n.id}/addendum`} method="post">
-                    <button type="submit" disabled={n.status !== "SIGNED"}>
-                      Addendum
-                    </button>
-                  </form>
+                  ))}
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+            </CardContent>
+          </Card>
+
+          {/* Documents Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-900">Documents</h3>
+                <DocumentUploader clientPersonId={c.clientPersonId} caseId={c.id} token={token} apiBase={apiBase} />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHeaderCell>File Name</TableHeaderCell>
+                    <TableHeaderCell>Type</TableHeaderCell>
+                    <TableHeaderCell>Date</TableHeaderCell>
+                    <TableHeaderCell>Actions</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {docs.map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="font-medium">{doc.fileName}</TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{doc.docType}</Badge>
+                      </TableCell>
+                      <TableCell>{new Date(doc.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Button variant="secondary" size="sm" asChild>
+                          <a href={`/documents/${doc.id}/download`}>Download</a>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Timeline Card */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-slate-900">Timeline</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {timeline.map((i) => (
+                  <div key={`${i.kind}-${i.refId}`} className="flex items-start gap-4 p-4 rounded-lg border border-slate-200">
+                    <div className="text-2xl">
+                      {i.kind === "TASK" ? "✅" : i.kind === "NOTE" ? "📝" : i.kind === "DOCUMENT" ? "📄" : "🔍"}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-medium text-slate-900">{i.title}</span>
+                        <span className="text-xs text-slate-500">
+                          {new Date(i.at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {i.description && (
+                        <p className="text-sm text-slate-600">{i.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column - Narrower */}
+        <div className="space-y-6">
+          {/* Client Info Card */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-slate-900">Client Information</h3>
+            </CardHeader>
+            <CardContent>
+              <DataList>
+                <DataListItem label="Name" value={`${c.client.firstName} ${c.client.lastName}`} />
+                <DataListItem label="Case ID" value={c.id} />
+                <DataListItem label="Status" value={<StatusBadge status={c.status} />} />
+              </DataList>
+            </CardContent>
+          </Card>
+
+          {/* Program Card */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-slate-900">Program</h3>
+            </CardHeader>
+            <CardContent>
+              <form action={`/cases/${params.id}/program/set`} method="post" className="space-y-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700">Program</label>
+                  <select 
+                    name="programKey" 
+                    defaultValue={readiness.programKey || ""}
+                    className="w-full h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                  >
+                    {enabledPrograms.map((p) => (
+                      <option key={p.programKey} value={p.programKey}>
+                        {p.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <Button type="submit" className="w-full">Set Program</Button>
+              </form>
+              <p className="text-xs text-slate-500 mt-2">
+                Readiness checklist and scoring update based on the selected program.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Tasks Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-slate-900">Recent Tasks</h3>
+                <Button variant="secondary" size="sm">View All</Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {tasks.slice(0, 5).map((task) => (
+                  <div key={task.id} className="flex items-center justify-between p-3 rounded-lg border border-slate-200">
+                    <div>
+                      <div className="font-medium text-slate-900">{task.title}</div>
+                      {task.dueAt && (
+                        <div className="text-sm text-slate-500">Due: {new Date(task.dueAt).toLocaleDateString()}</div>
+                      )}
+                    </div>
+                    <StatusBadge status={task.status} />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Verifications Card */}
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-slate-900">Verifications</h3>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {verifs.map((verif) => (
+                  <div key={verif.id} className="p-3 rounded-lg border border-slate-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-slate-900">{verif.type}</span>
+                      <StatusBadge status={verif.status} />
+                    </div>
+                    {verif.nextDueAt && (
+                      <div className="text-xs text-slate-500">Next due: {new Date(verif.nextDueAt).toLocaleDateString()}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
-  );
-}
-
-function CreateTaskForm({ caseId }: { caseId: string }) {
-  return (
-    <form action={`/cases/${caseId}/tasks/create`} method="post" style={{ display: "flex", gap: 8, marginTop: 8 }}>
-      <input name="title" placeholder="Task title" required />
-      <input name="dueAt" placeholder="Due ISO date (optional)" />
-      <button type="submit">Add Task</button>
-    </form>
-  );
-}
-
-function CreateNoteForm({ caseId }: { caseId: string }) {
-  return (
-    <form action={`/cases/${caseId}/notes/create`} method="post" style={{ display: "flex", gap: 8, marginTop: 8 }}>
-      <select name="noteType" defaultValue="CASE_NOTE">
-        <option value="CASE_NOTE">CASE_NOTE</option>
-        <option value="COACHING_NOTE">COACHING_NOTE</option>
-        <option value="COMPLIANCE_NOTE">COMPLIANCE_NOTE</option>
-      </select>
-      <input name="narrative" placeholder="Narrative summary" />
-      <button type="submit">Add Note</button>
-    </form>
   );
 }

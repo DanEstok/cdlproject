@@ -1,4 +1,8 @@
 import { ensureProvisioned, apiFetch } from "../../../lib/api";
+import { PageHeader } from "../../../components/ui/PageHeader";
+import { Card, CardContent, CardHeader } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Badge } from "../../../components/ui/Badge";
 
 type Program = {
   programKey: string;
@@ -13,94 +17,133 @@ export default async function ProgramsAdminPage() {
     const programs = await apiFetch<Program[]>("/programs");
 
     return (
-      <div style={{ padding: 24, maxWidth: 1000 }}>
-        <a href="/cases">← Back to cases</a>
-        <h2 style={{ marginTop: 12 }}>Programs</h2>
+      <div className="space-y-6">
+        <PageHeader 
+          title="Programs" 
+          subtitle="Programs control which readiness checklist applies to a case. Create one, clone one, then edit its requirements."
+          actions={
+            <Button asChild>
+              <a href="/admin/programs/create">Create Program</a>
+            </Button>
+          }
+        />
 
-        <p style={{ opacity: 0.85 }}>
-          Programs control which readiness checklist applies to a case. Create one, clone one, then edit its requirements.
-        </p>
-
-        <section style={{ marginTop: 16, border: "1px solid #ddd", padding: 12 }}>
-          <h3 style={{ marginTop: 0 }}>Create Program</h3>
-          <form action="/admin/programs/create" method="post" style={{ display: "grid", gap: 10, maxWidth: 560 }}>
-            <label style={{ display: "grid", gap: 6 }}>
-              Program Key (UPPERCASE_WITH_UNDERSCORES)
-              <input name="programKey" placeholder="APACHE_DRIVEN_TRUCKING" required />
-            </label>
-            <label style={{ display: "grid", gap: 6 }}>
-              Display Name
-              <input name="displayName" placeholder="Apache Driven Trucker Pathway" required />
-            </label>
-            <label style={{ display: "grid", gap: 6 }}>
-              Description (optional)
-              <textarea name="description" rows={3} />
-            </label>
-            <button type="submit">Create</button>
-          </form>
-        </section>
-
-        <section style={{ marginTop: 16 }}>
-          <h3>Existing Programs</h3>
-          <div style={{ display: "grid", gap: 10 }}>
-            {programs.map((p) => (
-              <div key={p.programKey} style={{ border: "1px solid #ddd", padding: 12 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-                  <div>
-                    <div style={{ fontSize: 18 }}>
-                      <strong>{p.displayName}</strong>
-                      <span style={{ marginLeft: 10, fontSize: 12, opacity: 0.7 }}>{p.programKey}</span>
-                    </div>
-                    {p.description ? <div style={{ marginTop: 6, opacity: 0.85 }}>{p.description}</div> : null}
-                    <div style={{ marginTop: 6, fontSize: 12, opacity: 0.8 }}>
-                      Status: {p.enabled ? "Enabled" : "Disabled"}
-                    </div>
-                  </div>
-
-                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                    <a href={`/admin/programs/${encodeURIComponent(p.programKey)}`}>Edit requirements</a>
-
-                    <form action={`/admin/programs/${encodeURIComponent(p.programKey)}/toggle`} method="post">
-                      <input type="hidden" name="enabled" value={p.enabled ? "false" : "true"} />
-                      <button type="submit">{p.enabled ? "Disable" : "Enable"}</button>
-                    </form>
-
-                    <a href={`/admin/programs/${encodeURIComponent(p.programKey)}/clone`}>Clone</a>
-                  </div>
-                </div>
+        {/* Create Program Card */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold text-slate-900">Create New Program</h3>
+          </CardHeader>
+          <CardContent>
+            <form action="/admin/programs/create" method="post" className="space-y-4 max-w-lg">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Program Key (UPPERCASE_WITH_UNDERSCORES)
+                </label>
+                <input 
+                  name="programKey" 
+                  placeholder="APACHE_DRIVEN_TRUCKING" 
+                  required 
+                  className="w-full h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                />
               </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Display Name
+                </label>
+                <input 
+                  name="displayName" 
+                  placeholder="Apache Driven Trucker Pathway" 
+                  required 
+                  className="w-full h-9 rounded-xl border border-slate-300 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Description (optional)
+                </label>
+                <textarea 
+                  name="description" 
+                  rows={3} 
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
+                />
+              </div>
+              <Button type="submit">Create Program</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Existing Programs */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-slate-900">Existing Programs</h3>
+          <div className="grid gap-4">
+            {programs.map((p) => (
+              <Card key={p.programKey}>
+                <CardContent className="p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-lg font-semibold text-slate-900">{p.displayName}</h4>
+                        <Badge variant={p.enabled ? "success" : "neutral"}>
+                          {p.enabled ? "Enabled" : "Disabled"}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-slate-600 mb-1">{p.programKey}</p>
+                      {p.description && (
+                        <p className="text-sm text-slate-600">{p.description}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Button variant="secondary" asChild>
+                        <a href={`/admin/programs/${encodeURIComponent(p.programKey)}`}>Edit</a>
+                      </Button>
+                      
+                      <form action={`/admin/programs/${encodeURIComponent(p.programKey)}/toggle`} method="post">
+                        <input type="hidden" name="enabled" value={p.enabled ? "false" : "true"} />
+                        <Button variant="secondary" type="submit">
+                          {p.enabled ? "Disable" : "Enable"}
+                        </Button>
+                      </form>
+
+                      <Button variant="secondary" asChild>
+                        <a href={`/admin/programs/${encodeURIComponent(p.programKey)}/clone`}>Clone</a>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </section>
+        </div>
       </div>
     );
   } catch (error) {
     if (error instanceof Error && error.message === "No auth token") {
       return (
-        <div style={{ padding: 24, maxWidth: 600 }}>
-          <h2>Authentication Required</h2>
-          <p style={{ marginTop: 16, opacity: 0.85 }}>
+        <div className="p-6 max-w-md">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Authentication Required</h2>
+          <p className="text-slate-600 mb-4">
             You need to be logged in to access the admin programs page.
           </p>
-          <p style={{ marginTop: 8 }}>
-            <a href="/" style={{ color: "#0070f3" }}>Return to home page to log in</a>
-          </p>
+          <Button asChild>
+            <a href="/">Return to home page to log in</a>
+          </Button>
         </div>
       );
     }
     
     return (
-      <div style={{ padding: 24, maxWidth: 600 }}>
-        <h2>Error</h2>
-        <p style={{ marginTop: 16, opacity: 0.85 }}>
+      <div className="p-6 max-w-md">
+        <h2 className="text-2xl font-bold text-slate-900 mb-4">Error</h2>
+        <p className="text-slate-600 mb-4">
           An error occurred while loading the programs page.
         </p>
-        <p style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
+        <p className="text-sm text-slate-500 mb-4">
           {error instanceof Error ? error.message : "Unknown error"}
         </p>
-        <p style={{ marginTop: 16 }}>
-          <a href="/cases" style={{ color: "#0070f3" }}>← Back to cases</a>
-        </p>
+        <Button asChild>
+          <a href="/cases">← Back to cases</a>
+        </Button>
       </div>
     );
   }
