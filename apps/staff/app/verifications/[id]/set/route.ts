@@ -4,6 +4,8 @@ import { apiFetch, ensureProvisioned } from "../../../../lib/api";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   await ensureProvisioned();
 
+  const { id } = await params;
+
   const form = await req.formData();
   const status = String(form.get("status") || "PENDING");
 
