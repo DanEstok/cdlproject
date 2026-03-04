@@ -13,6 +13,7 @@ exports.AuditInterceptor = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 let AuditInterceptor = class AuditInterceptor {
+    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -20,10 +21,11 @@ let AuditInterceptor = class AuditInterceptor {
         const request = context.switchToHttp().getRequest();
         const { method, url, body, user, organizationId } = request;
         const timestamp = new Date();
+        // Store original request data for audit
         request.auditData = {
             method,
             url,
-            body: JSON.parse(JSON.stringify(body)),
+            body: JSON.parse(JSON.stringify(body)), // Deep copy
             user,
             organizationId,
             timestamp,
@@ -36,4 +38,3 @@ exports.AuditInterceptor = AuditInterceptor = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], AuditInterceptor);
-//# sourceMappingURL=audit.interceptor.js.map

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/auth.guard");
 const readiness_config_service_1 = require("./readiness-config.service");
 let ReadinessConfigController = class ReadinessConfigController {
+    cfg;
     constructor(cfg) {
         this.cfg = cfg;
     }
@@ -70,4 +71,3 @@ exports.ReadinessConfigController = ReadinessConfigController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [readiness_config_service_1.ReadinessConfigService])
 ], ReadinessConfigController);
-//# sourceMappingURL=readiness-config.controller.js.map

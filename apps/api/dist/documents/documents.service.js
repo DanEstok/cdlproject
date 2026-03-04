@@ -19,6 +19,10 @@ const uuid_1 = require("uuid");
 const client_1 = require("@prisma/client");
 const rules_1 = require("../verifications/rules");
 let DocumentsService = class DocumentsService {
+    prisma;
+    audit;
+    s3;
+    bucket;
     constructor(prisma, audit) {
         this.prisma = prisma;
         this.audit = audit;
@@ -126,6 +130,8 @@ let DocumentsService = class DocumentsService {
             entityType: "Document",
             entityId: doc.id
         });
+        // Auto-create a verification when uploading key compliance documents
+        // Map docType -> verification type
         const docTypeToVerification = {
             DOT_MEDICAL: client_1.VerificationType.DOT_MEDICAL,
             MVR: client_1.VerificationType.MVR,
@@ -142,6 +148,9 @@ let DocumentsService = class DocumentsService {
                 }
             });
             if (!existing) {
+                // Smart parsing:
+                // - verifiedAt = issueDate if present else now
+                // - nextDueAt = expiresAt if present else default interval
                 const verifiedAt = doc.issueDate ?? new Date();
                 const nextDueAt = doc.expiresAt ??
                     (0, rules_1.computeDefaultNextDueAt)(vType, verifiedAt) ??
@@ -170,19 +179,24 @@ let DocumentsService = class DocumentsService {
                 });
             }
         }
+        // Auto-create workflow tasks based on uploaded document type
         if (doc.caseId) {
             const marker = `documentId=${doc.id};docType=${doc.docType}`;
+            // ID uploaded -> kick off compliance sequence
             if (doc.docType === "ID") {
                 await this.ensureTask(doc.organizationId, doc.caseId, "Run MVR (Motor Vehicle Record)", marker, 2);
                 await this.ensureTask(doc.organizationId, doc.caseId, "Run Clearinghouse (DACH) query", marker, 2);
                 await this.ensureTask(doc.organizationId, doc.caseId, "Schedule DOT physical / obtain medical card", marker, 7);
             }
+            // DOT medical uploaded -> optional follow-up tasks
             if (doc.docType === "DOT_MEDICAL") {
                 await this.ensureTask(doc.organizationId, doc.caseId, "Verify DOT medical details and expiration date", marker, 3);
             }
+            // MVR uploaded -> review task
             if (doc.docType === "MVR") {
                 await this.ensureTask(doc.organizationId, doc.caseId, "Review MVR for disqualifiers and points", marker, 3);
             }
+            // Clearinghouse uploaded -> review task
             if (doc.docType === "CLEARINGHOUSE") {
                 await this.ensureTask(doc.organizationId, doc.caseId, "Review Clearinghouse result and document outcomes", marker, 3);
             }
@@ -202,4 +216,3 @@ exports.DocumentsService = DocumentsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], DocumentsService);
-//# sourceMappingURL=documents.service.js.map

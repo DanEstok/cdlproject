@@ -17,4 +17,3 @@ async function bootstrap() {
     console.log("API running on http://localhost:4000/api/v1");
 }
 bootstrap();
-//# sourceMappingURL=main.js.map

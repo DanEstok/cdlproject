@@ -23,6 +23,9 @@ var DocumentType;
     DocumentType["OTHER"] = "OTHER";
 })(DocumentType || (exports.DocumentType = DocumentType = {}));
 class PresignDocumentDto {
+    fileName;
+    mimeType;
+    sizeBytes;
 }
 exports.PresignDocumentDto = PresignDocumentDto;
 __decorate([
@@ -39,6 +42,15 @@ __decorate([
     __metadata("design:type", Number)
 ], PresignDocumentDto.prototype, "sizeBytes", void 0);
 class CompleteDocumentDto {
+    storageKey;
+    fileName;
+    mimeType;
+    sizeBytes;
+    docType;
+    caseId;
+    personId;
+    issueDate;
+    expiresAt;
 }
 exports.CompleteDocumentDto = CompleteDocumentDto;
 __decorate([
@@ -82,4 +94,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CompleteDocumentDto.prototype, "expiresAt", void 0);
-//# sourceMappingURL=dto.js.map

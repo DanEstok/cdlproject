@@ -34,6 +34,11 @@ var VerificationStatus;
     VerificationStatus["NOT_REQUIRED"] = "NOT_REQUIRED";
 })(VerificationStatus || (exports.VerificationStatus = VerificationStatus = {}));
 class CreateVerificationDto {
+    type;
+    status;
+    nextDueAt;
+    notes;
+    evidenceDocumentId;
 }
 exports.CreateVerificationDto = CreateVerificationDto;
 __decorate([
@@ -61,6 +66,10 @@ __decorate([
     __metadata("design:type", String)
 ], CreateVerificationDto.prototype, "evidenceDocumentId", void 0);
 class UpdateVerificationDto {
+    status;
+    nextDueAt;
+    notes;
+    evidenceDocumentId;
 }
 exports.UpdateVerificationDto = UpdateVerificationDto;
 __decorate([
@@ -83,4 +92,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateVerificationDto.prototype, "evidenceDocumentId", void 0);
-//# sourceMappingURL=dto.js.map

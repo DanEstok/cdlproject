@@ -14,4 +14,3 @@ async function test() {
     }
 }
 test();
-//# sourceMappingURL=test.js.map

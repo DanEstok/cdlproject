@@ -19,6 +19,8 @@ const cases_service_1 = require("./cases.service");
 const readiness_service_1 = require("./readiness.service");
 const dto_1 = require("./dto");
 let CasesController = class CasesController {
+    cases;
+    readiness;
     constructor(cases, readiness) {
         this.cases = cases;
         this.readiness = readiness;
@@ -110,4 +112,3 @@ exports.CasesController = CasesController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [cases_service_1.CasesService, readiness_service_1.ReadinessService])
 ], CasesController);
-//# sourceMappingURL=cases.controller.js.map

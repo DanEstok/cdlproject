@@ -16,12 +16,16 @@ const passport_jwt_1 = require("passport-jwt");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 let ClerkStrategy = class ClerkStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
+    configService;
+    prisma;
     constructor(configService, prisma) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKeyProvider: async (request, rawJwtToken, done) => {
                 try {
+                    // In production, fetch Clerk JWKS and verify signature
+                    // For now, we'll decode and validate the token
                     const decoded = JSON.parse(Buffer.from(rawJwtToken.split('.')[1], 'base64').toString());
                     return done(null, decoded);
                 }
@@ -34,6 +38,7 @@ let ClerkStrategy = class ClerkStrategy extends (0, passport_1.PassportStrategy)
         this.prisma = prisma;
     }
     async validate(payload) {
+        // Find user by clerkUserId and include organization
         const user = await this.prisma.user.findUnique({
             where: { clerkUserId: payload.sub },
             include: { organization: true },
@@ -56,4 +61,3 @@ exports.ClerkStrategy = ClerkStrategy = __decorate([
     __metadata("design:paramtypes", [config_1.ConfigService,
         prisma_service_1.PrismaService])
 ], ClerkStrategy);
-//# sourceMappingURL=clerk.strategy.js.map

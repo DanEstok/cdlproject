@@ -13,6 +13,9 @@ exports.CreateCaseDto = void 0;
 const class_validator_1 = require("class-validator");
 const create_person_dto_1 = require("../../people/dto/create-person.dto");
 class CreateCaseDto {
+    clientPersonId;
+    client;
+    notes;
 }
 exports.CreateCaseDto = CreateCaseDto;
 __decorate([
@@ -28,4 +31,3 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateCaseDto.prototype, "notes", void 0);
-//# sourceMappingURL=create-case.dto.js.map

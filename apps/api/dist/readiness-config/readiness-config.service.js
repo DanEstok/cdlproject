@@ -13,14 +13,17 @@ exports.ReadinessConfigService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 let ReadinessConfigService = class ReadinessConfigService {
+    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async ensureDefaults(organizationId) {
+        // Only create if none exist at all for this org
         const count = await this.prisma.readinessRequirement.count({ where: { organizationId } });
         if (count > 0)
             return { created: 0, skipped: true };
         const defaults = [
+            // Apache Driven trucking baseline
             {
                 programKey: "APACHE_DRIVEN_TRUCKING",
                 kind: "DOC_PRESENT",
@@ -49,6 +52,7 @@ let ReadinessConfigService = class ReadinessConfigService {
                 verificationType: "CLEARINGHOUSE",
                 weight: 3
             },
+            // Recovery Case Mgmt Ohio baseline (example starter set, you'll adjust)
             {
                 programKey: "RECOVERY_CASE_MGMT_OH",
                 kind: "DOC_PRESENT",
@@ -101,6 +105,7 @@ let ReadinessConfigService = class ReadinessConfigService {
         });
     }
     async replaceRequirements(organizationId, programKey, items) {
+        // Replace-all MVP: delete program rows then insert new
         await this.prisma.readinessRequirement.deleteMany({ where: { organizationId, programKey } });
         if (!items?.length)
             return { inserted: 0 };
@@ -124,4 +129,3 @@ exports.ReadinessConfigService = ReadinessConfigService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ReadinessConfigService);
-//# sourceMappingURL=readiness-config.service.js.map

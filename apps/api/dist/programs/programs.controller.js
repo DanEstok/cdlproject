@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/auth.guard");
 const programs_service_1 = require("./programs.service");
 let ProgramsController = class ProgramsController {
+    programs;
     constructor(programs) {
         this.programs = programs;
     }
@@ -72,4 +73,3 @@ exports.ProgramsController = ProgramsController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [programs_service_1.ProgramsService])
 ], ProgramsController);
-//# sourceMappingURL=programs.controller.js.map

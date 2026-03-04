@@ -13,6 +13,7 @@ exports.AuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 let AuthGuard = class AuthGuard {
+    auth;
     constructor(auth) {
         this.auth = auth;
     }
@@ -31,4 +32,3 @@ exports.AuthGuard = AuthGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthGuard);
-//# sourceMappingURL=auth.guard.js.map

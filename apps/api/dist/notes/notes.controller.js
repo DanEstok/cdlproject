@@ -18,6 +18,7 @@ const auth_guard_1 = require("../auth/auth.guard");
 const notes_service_1 = require("./notes.service");
 const dto_1 = require("./dto");
 let NotesController = class NotesController {
+    notes;
     constructor(notes) {
         this.notes = notes;
     }
@@ -86,4 +87,3 @@ exports.NotesController = NotesController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [notes_service_1.NotesService])
 ], NotesController);
-//# sourceMappingURL=notes.controller.js.map

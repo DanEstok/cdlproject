@@ -18,6 +18,18 @@ var PersonType;
     PersonType["REFERRAL_SOURCE"] = "REFERRAL_SOURCE";
 })(PersonType || (exports.PersonType = PersonType = {}));
 class CreatePersonDto {
+    firstName;
+    lastName;
+    email;
+    phone;
+    address;
+    city;
+    state;
+    zip;
+    type;
+    dateOfBirth;
+    ssn;
+    notes;
 }
 exports.CreatePersonDto = CreatePersonDto;
 __decorate([
@@ -77,4 +89,3 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreatePersonDto.prototype, "notes", void 0);
-//# sourceMappingURL=create-person.dto.js.map

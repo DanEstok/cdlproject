@@ -18,21 +18,27 @@ const auth_guard_1 = require("../auth/auth.guard");
 const tasks_service_1 = require("./tasks.service");
 const dto_1 = require("./dto");
 let TasksController = class TasksController {
+    tasks;
     constructor(tasks) {
         this.tasks = tasks;
     }
+    // Create task under a case
     create(req, caseId, dto) {
         return this.tasks.create(req.user.organizationId, req.user, caseId, dto);
     }
+    // List case tasks
     list(req, caseId, status) {
         return this.tasks.list(req.user.organizationId, caseId, { status });
     }
+    // My tasks
     my(req, status) {
         return this.tasks.myTasks(req.user.organizationId, req.user.userId, { status });
     }
+    // Update task
     update(req, id, dto) {
         return this.tasks.update(req.user.organizationId, req.user, id, dto);
     }
+    // Complete task
     complete(req, id) {
         return this.tasks.complete(req.user.organizationId, req.user, id);
     }
@@ -86,4 +92,3 @@ exports.TasksController = TasksController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [tasks_service_1.TasksService])
 ], TasksController);
-//# sourceMappingURL=tasks.controller.js.map

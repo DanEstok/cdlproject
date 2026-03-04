@@ -14,6 +14,8 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const audit_service_1 = require("../audit/audit.service");
 let NotesService = class NotesService {
+    prisma;
+    audit;
     constructor(prisma, audit) {
         this.prisma = prisma;
         this.audit = audit;
@@ -65,9 +67,11 @@ let NotesService = class NotesService {
     }
     async update(organizationId, actor, id, dto) {
         const note = await this.get(organizationId, id);
+        // Immutability: signed notes cannot be edited; only addendum allowed.
         if (note.status === "SIGNED") {
             throw new common_1.ForbiddenException("Signed notes are immutable. Use addendum.");
         }
+        // Only author or admin can edit draft (MVP rule)
         if (note.authorUserId !== actor.userId && actor.role !== "ADMIN") {
             throw new common_1.ForbiddenException("Not allowed to edit this note.");
         }
@@ -93,6 +97,7 @@ let NotesService = class NotesService {
         const note = await this.get(organizationId, id);
         if (note.status === "SIGNED")
             return note;
+        // Only author or admin can sign (MVP)
         if (note.authorUserId !== actor.userId && actor.role !== "ADMIN") {
             throw new common_1.ForbiddenException("Not allowed to sign this note.");
         }
@@ -115,6 +120,7 @@ let NotesService = class NotesService {
         if (note.status !== "SIGNED") {
             throw new common_1.BadRequestException("Addendums are only allowed for signed notes.");
         }
+        // Addendum is stored as a new note, linked by templateKey convention.
         const add = await this.prisma.note.create({
             data: {
                 organizationId,
@@ -145,4 +151,3 @@ exports.NotesService = NotesService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], NotesService);
-//# sourceMappingURL=notes.service.js.map

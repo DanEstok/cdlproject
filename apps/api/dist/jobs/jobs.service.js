@@ -18,13 +18,18 @@ const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
 const prisma_service_1 = require("../prisma/prisma.service");
 let JobsService = class JobsService {
+    prisma;
+    connection = new ioredis_1.default(process.env.REDIS_URL || "redis://localhost:6379");
+    queue = new bullmq_1.Queue("system", { connection: this.connection });
     constructor(prisma) {
         this.prisma = prisma;
-        this.connection = new ioredis_1.default(process.env.REDIS_URL || "redis://localhost:6379");
-        this.queue = new bullmq_1.Queue("system", { connection: this.connection });
     }
     async onModuleInit() {
+        // Repeat daily at ~3:15 AM server time (local dev, good enough for now)
         await this.queue.add("document-expiry-scan", {}, { repeat: { pattern: "15 3 * * *" }, removeOnComplete: true, removeOnFail: true });
+        // Worker in-process (dev-friendly)
+        // In production, run this in a separate process.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const worker = new bullmq_1.Worker("system", async (job) => {
             if (job.name === "document-expiry-scan") {
                 await this.runDocumentExpiryScan();
@@ -42,6 +47,7 @@ let JobsService = class JobsService {
             orderBy: { expiresAt: "asc" }
         });
         for (const d of docs) {
+            // Skip if no caseId (we only auto-task for case-scoped docs in MVP)
             if (!d.caseId)
                 continue;
             const title = `Renew document: ${d.docType}`;
@@ -75,4 +81,3 @@ exports.JobsService = JobsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], JobsService);
-//# sourceMappingURL=jobs.service.js.map

@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateCaseDto = exports.CreateCaseDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateCaseDto {
+    clientPersonId;
+    notes;
 }
 exports.CreateCaseDto = CreateCaseDto;
 __decorate([
@@ -24,6 +26,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateCaseDto.prototype, "notes", void 0);
 class UpdateCaseDto {
+    notes;
+    status;
 }
 exports.UpdateCaseDto = UpdateCaseDto;
 __decorate([
@@ -36,4 +40,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateCaseDto.prototype, "status", void 0);
-//# sourceMappingURL=dto.js.map

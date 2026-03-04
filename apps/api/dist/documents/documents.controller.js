@@ -18,6 +18,7 @@ const auth_guard_1 = require("../auth/auth.guard");
 const documents_service_1 = require("./documents.service");
 const dto_1 = require("./dto");
 let DocumentsController = class DocumentsController {
+    docs;
     constructor(docs) {
         this.docs = docs;
     }
@@ -73,4 +74,3 @@ exports.DocumentsController = DocumentsController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [documents_service_1.DocumentsService])
 ], DocumentsController);
-//# sourceMappingURL=documents.controller.js.map

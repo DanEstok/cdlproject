@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const organization_decorator_1 = require("../decorators/organization.decorator");
 let OrganizationGuard = class OrganizationGuard {
+    reflector;
     constructor(reflector) {
         this.reflector = reflector;
     }
@@ -27,6 +28,7 @@ let OrganizationGuard = class OrganizationGuard {
         if (!user || !user.organizationId) {
             return false;
         }
+        // Add organizationId to request for easy access in controllers
         request.organizationId = user.organizationId;
         return true;
     }
@@ -36,4 +38,3 @@ exports.OrganizationGuard = OrganizationGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [core_1.Reflector])
 ], OrganizationGuard);
-//# sourceMappingURL=organization.guard.js.map

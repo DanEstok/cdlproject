@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_guard_1 = require("../auth/auth.guard");
 const timeline_service_1 = require("./timeline.service");
 let TimelineController = class TimelineController {
+    timeline;
     constructor(timeline) {
         this.timeline = timeline;
     }
@@ -38,4 +39,3 @@ exports.TimelineController = TimelineController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [timeline_service_1.TimelineService])
 ], TimelineController);
-//# sourceMappingURL=timeline.controller.js.map

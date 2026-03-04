@@ -20,4 +20,3 @@ exports.AuditModule = AuditModule = __decorate([
         exports: [audit_service_1.AuditService]
     })
 ], AuditModule);
-//# sourceMappingURL=audit.module.js.map

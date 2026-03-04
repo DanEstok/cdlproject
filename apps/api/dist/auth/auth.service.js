@@ -18,13 +18,14 @@ const jwks_rsa_1 = __importDefault(require("jwks-rsa"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma_service_1 = require("../prisma/prisma.service");
 let AuthService = class AuthService {
+    prisma;
+    jwks = (0, jwks_rsa_1.default)({
+        jwksUri: process.env.CLERK_JWKS_URL || "",
+        cache: true,
+        rateLimit: true
+    });
     constructor(prisma) {
         this.prisma = prisma;
-        this.jwks = (0, jwks_rsa_1.default)({
-            jwksUri: process.env.CLERK_JWKS_URL || "",
-            cache: true,
-            rateLimit: true
-        });
     }
     getSigningKey(kid) {
         return new Promise((resolve, reject) => {
@@ -61,6 +62,7 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException("Missing sub");
         const user = await this.prisma.user.findUnique({ where: { clerkUserId } });
         if (!user || !user.isActive) {
+            // For provision endpoint, we allow unprovisioned users
             throw new common_1.UnauthorizedException("User not provisioned");
         }
         return {
@@ -99,4 +101,3 @@ exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], AuthService);
-//# sourceMappingURL=auth.service.js.map

@@ -23,4 +23,3 @@ exports.NotesModule = NotesModule = __decorate([
         providers: [notes_service_1.NotesService]
     })
 ], NotesModule);
-//# sourceMappingURL=notes.module.js.map

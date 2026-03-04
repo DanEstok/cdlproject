@@ -23,4 +23,3 @@ exports.ReadinessConfigModule = ReadinessConfigModule = __decorate([
         exports: [readiness_config_service_1.ReadinessConfigService]
     })
 ], ReadinessConfigModule);
-//# sourceMappingURL=readiness-config.module.js.map

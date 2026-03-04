@@ -13,6 +13,7 @@ exports.ReadinessService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 let ReadinessService = class ReadinessService {
+    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -24,10 +25,12 @@ let ReadinessService = class ReadinessService {
     }
     async getCaseReadiness(organizationId, caseId) {
         const c = await this.ensureCase(organizationId, caseId);
+        // Pull requirements for the programKey
         const reqs = await this.prisma.readinessRequirement.findMany({
             where: { organizationId, programKey: c.programKey, enabled: true },
             orderBy: [{ weight: "desc" }, { label: "asc" }]
         });
+        // Pull current evidence
         const [docs, passedVerifs] = await Promise.all([
             this.prisma.document.findMany({
                 where: {
@@ -76,4 +79,3 @@ exports.ReadinessService = ReadinessService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ReadinessService);
-//# sourceMappingURL=readiness.service.js.map

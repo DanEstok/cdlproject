@@ -27,6 +27,10 @@ var NoteStatus;
     NoteStatus["SIGNED"] = "SIGNED";
 })(NoteStatus || (exports.NoteStatus = NoteStatus = {}));
 class CreateNoteDto {
+    noteType;
+    templateKey;
+    contentJson;
+    narrative;
 }
 exports.CreateNoteDto = CreateNoteDto;
 __decorate([
@@ -48,6 +52,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateNoteDto.prototype, "narrative", void 0);
 class UpdateNoteDto {
+    contentJson;
+    narrative;
 }
 exports.UpdateNoteDto = UpdateNoteDto;
 __decorate([
@@ -61,6 +67,8 @@ __decorate([
     __metadata("design:type", String)
 ], UpdateNoteDto.prototype, "narrative", void 0);
 class AddendumDto {
+    contentJson;
+    narrative;
 }
 exports.AddendumDto = AddendumDto;
 __decorate([
@@ -72,4 +80,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AddendumDto.prototype, "narrative", void 0);
-//# sourceMappingURL=dto.js.map

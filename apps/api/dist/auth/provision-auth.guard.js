@@ -13,6 +13,7 @@ exports.ProvisionAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 let ProvisionAuthGuard = class ProvisionAuthGuard {
+    auth;
     constructor(auth) {
         this.auth = auth;
     }
@@ -31,4 +32,3 @@ exports.ProvisionAuthGuard = ProvisionAuthGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], ProvisionAuthGuard);
-//# sourceMappingURL=provision-auth.guard.js.map

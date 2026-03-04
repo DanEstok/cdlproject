@@ -13,9 +13,11 @@ exports.ProgramsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 function isValidProgramKey(k) {
+    // strict-ish: uppercase, digits, underscores
     return /^[A-Z0-9_]{3,64}$/.test(k);
 }
 let ProgramsService = class ProgramsService {
+    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -24,12 +26,14 @@ let ProgramsService = class ProgramsService {
             where: { organizationId },
             orderBy: [{ enabled: "desc" }, { displayName: "asc" }]
         });
+        // If no program configs exist yet, infer from ReadinessRequirement programKeys
         if (rows.length === 0) {
             const inferred = await this.prisma.readinessRequirement.findMany({
                 where: { organizationId },
                 select: { programKey: true },
                 distinct: ["programKey"]
             });
+            // Create minimal configs for inferred keys
             if (inferred.length) {
                 await this.prisma.programConfig.createMany({
                     data: inferred.map((r) => ({
@@ -121,4 +125,3 @@ exports.ProgramsService = ProgramsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ProgramsService);
-//# sourceMappingURL=programs.service.js.map

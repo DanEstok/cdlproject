@@ -18,6 +18,11 @@ var PersonType;
     PersonType["PARTNER_CONTACT"] = "PARTNER_CONTACT";
 })(PersonType || (exports.PersonType = PersonType = {}));
 class CreatePersonDto {
+    type;
+    firstName;
+    lastName;
+    phone;
+    email;
 }
 exports.CreatePersonDto = CreatePersonDto;
 __decorate([
@@ -44,6 +49,11 @@ __decorate([
     __metadata("design:type", String)
 ], CreatePersonDto.prototype, "email", void 0);
 class UpdatePersonDto {
+    type;
+    firstName;
+    lastName;
+    phone;
+    email;
 }
 exports.UpdatePersonDto = UpdatePersonDto;
 __decorate([
@@ -71,4 +81,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdatePersonDto.prototype, "email", void 0);
-//# sourceMappingURL=dto.js.map

@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
+import { PageHeader } from "../../../components/ui/PageHeader";
+import { Card, CardContent } from "../../../components/ui/Card";
+import { Button } from "../../../components/ui/Button";
+import { Input } from "../../../components/ui/Input";
+import { Textarea } from "../../../components/ui/Textarea";
 
 export default function NewCasePage() {
   const { getToken } = useAuth();
@@ -73,44 +79,74 @@ export default function NewCasePage() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 720 }}>
-      <a href="/cases">← Back to cases</a>
-      <h2 style={{ marginTop: 12 }}>Create New Case</h2>
+    <div className="space-y-6">
+      <PageHeader
+        title="Create New Case"
+        subtitle="Add a new client and create their case record."
+        actions={
+          <Link href="/cases">
+            <Button variant="secondary">Back to Cases</Button>
+          </Link>
+        }
+      />
 
-      <p style={{ opacity: 0.85 }}>
-        This creates a CLIENT person record, then creates a case linked to that client.
-      </p>
+      <Card>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+            <div className="space-y-4">
+              <div className="text-sm font-semibold text-slate-900">Client Information</div>
+              <div className="text-sm text-slate-600">
+                This creates a CLIENT person record, then creates a case linked to that client.
+              </div>
+            </div>
 
-      <form onSubmit={handleSubmit} style={{ display: "grid", gap: 10, marginTop: 16 }}>
-        <div style={{ display: "grid", gap: 6 }}>
-          <label>First name</label>
-          <input name="firstName" required disabled={isSubmitting} />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">First name</label>
+                <Input name="firstName" required disabled={isSubmitting} placeholder="Enter first name" />
+              </div>
 
-        <div style={{ display: "grid", gap: 6 }}>
-          <label>Last name</label>
-          <input name="lastName" required disabled={isSubmitting} />
-        </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Last name</label>
+                <Input name="lastName" required disabled={isSubmitting} placeholder="Enter last name" />
+              </div>
+            </div>
 
-        <div style={{ display: "grid", gap: 6 }}>
-          <label>Phone (optional)</label>
-          <input name="phone" disabled={isSubmitting} />
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Phone (optional)</label>
+                <Input name="phone" disabled={isSubmitting} placeholder="(555) 123-4567" />
+              </div>
 
-        <div style={{ display: "grid", gap: 6 }}>
-          <label>Email (optional)</label>
-          <input name="email" type="email" disabled={isSubmitting} />
-        </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Email (optional)</label>
+                <Input name="email" type="email" disabled={isSubmitting} placeholder="client@example.com" />
+              </div>
+            </div>
 
-        <div style={{ display: "grid", gap: 6 }}>
-          <label>Case notes (optional)</label>
-          <textarea name="caseNotes" rows={3} disabled={isSubmitting} />
-        </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Case notes (optional)</label>
+              <Textarea 
+                name="caseNotes" 
+                rows={4} 
+                disabled={isSubmitting} 
+                placeholder="Add any initial notes about this case..."
+              />
+            </div>
 
-        <button type="submit" style={{ marginTop: 8 }} disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Case"}
-        </button>
-      </form>
+            <div className="flex items-center gap-3 pt-4">
+              <Button type="submit" variant="primary" disabled={isSubmitting}>
+                {isSubmitting ? "Creating..." : "Create Case"}
+              </Button>
+              <Link href="/cases">
+                <Button type="button" variant="secondary" disabled={isSubmitting}>
+                  Cancel
+                </Button>
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

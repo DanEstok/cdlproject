@@ -16,6 +16,8 @@ const audit_service_1 = require("../audit/audit.service");
 const client_1 = require("@prisma/client");
 const rules_1 = require("./rules");
 let VerificationsService = class VerificationsService {
+    prisma;
+    audit;
     constructor(prisma, audit) {
         this.prisma = prisma;
         this.audit = audit;
@@ -38,6 +40,12 @@ let VerificationsService = class VerificationsService {
             return client_1.VerificationStatus.UNKNOWN;
         return client_1.VerificationStatus.PENDING;
     }
+    /**
+     * Creates or ensures the proper follow-up task exists.
+     * Rules:
+     * - FAILED => create Resolve task (due in 7 days)
+     * - PASSED + nextDueAt => create Renew task due at nextDueAt
+     */
     async ensureAutoTasksForVerification(v) {
         const marker = `verificationId=${v.id}`;
         if (v.status === client_1.VerificationStatus.FAILED) {
@@ -100,6 +108,10 @@ let VerificationsService = class VerificationsService {
         }
         const status = this.normalizeStatus(dto.status);
         const now = new Date();
+        // Default nextDueAt behavior:
+        // - if caller provides nextDueAt, use it
+        // - else if status PASSED, compute a default nextDueAt based on type
+        // - else leave null
         const computedNextDue = dto.nextDueAt
             ? new Date(dto.nextDueAt)
             : status === client_1.VerificationStatus.PASSED
@@ -153,6 +165,8 @@ let VerificationsService = class VerificationsService {
                 throw new common_1.BadRequestException("Invalid evidenceDocumentId");
         }
         const nextStatus = dto.status ? this.normalizeStatus(dto.status) : v.status;
+        // If status becomes PASSED and nextDueAt is not provided and not already set,
+        // compute default next due based on type.
         const now = new Date();
         const nextDueAt = dto.nextDueAt
             ? new Date(dto.nextDueAt)
@@ -241,4 +255,3 @@ exports.VerificationsService = VerificationsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], VerificationsService);
-//# sourceMappingURL=verifications.service.js.map

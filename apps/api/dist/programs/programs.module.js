@@ -23,4 +23,3 @@ exports.ProgramsModule = ProgramsModule = __decorate([
         exports: [programs_service_1.ProgramsService]
     })
 ], ProgramsModule);
-//# sourceMappingURL=programs.module.js.map

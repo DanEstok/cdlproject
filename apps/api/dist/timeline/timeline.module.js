@@ -22,4 +22,3 @@ exports.TimelineModule = TimelineModule = __decorate([
         providers: [timeline_service_1.TimelineService]
     })
 ], TimelineModule);
-//# sourceMappingURL=timeline.module.js.map

@@ -13,6 +13,7 @@ exports.TimelineService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 let TimelineService = class TimelineService {
+    prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -97,6 +98,7 @@ let TimelineService = class TimelineService {
                 refId: a.id
             });
         }
+        // sort newest first
         items.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
         return items.slice(0, 200);
     }
@@ -106,4 +108,3 @@ exports.TimelineService = TimelineService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], TimelineService);
-//# sourceMappingURL=timeline.service.js.map

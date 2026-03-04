@@ -18,6 +18,7 @@ const auth_guard_1 = require("../auth/auth.guard");
 const people_service_1 = require("./people.service");
 const dto_1 = require("./dto");
 let PeopleController = class PeopleController {
+    people;
     constructor(people) {
         this.people = people;
     }
@@ -74,4 +75,3 @@ exports.PeopleController = PeopleController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [people_service_1.PeopleService])
 ], PeopleController);
-//# sourceMappingURL=people.controller.js.map

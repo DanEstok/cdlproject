@@ -14,6 +14,8 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const audit_service_1 = require("../audit/audit.service");
 let CasesService = class CasesService {
+    prisma;
+    audit;
     constructor(prisma, audit) {
         this.prisma = prisma;
         this.audit = audit;
@@ -103,4 +105,3 @@ exports.CasesService = CasesService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], CasesService);
-//# sourceMappingURL=cases.service.js.map

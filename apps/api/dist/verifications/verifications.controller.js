@@ -18,6 +18,7 @@ const auth_guard_1 = require("../auth/auth.guard");
 const verifications_service_1 = require("./verifications.service");
 const dto_1 = require("./dto");
 let VerificationsController = class VerificationsController {
+    verifs;
     constructor(verifs) {
         this.verifs = verifs;
     }
@@ -74,4 +75,3 @@ exports.VerificationsController = VerificationsController = __decorate([
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __metadata("design:paramtypes", [verifications_service_1.VerificationsService])
 ], VerificationsController);
-//# sourceMappingURL=verifications.controller.js.map

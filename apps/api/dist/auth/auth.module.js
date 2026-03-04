@@ -25,4 +25,3 @@ exports.AuthModule = AuthModule = __decorate([
         controllers: [provision_controller_1.ProvisionController]
     })
 ], AuthModule);
-//# sourceMappingURL=auth.module.js.map

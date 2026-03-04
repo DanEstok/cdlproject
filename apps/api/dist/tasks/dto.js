@@ -19,6 +19,12 @@ var TaskStatus;
     TaskStatus["CANCELLED"] = "CANCELLED";
 })(TaskStatus || (exports.TaskStatus = TaskStatus = {}));
 class CreateTaskDto {
+    title;
+    description;
+    status;
+    dueAt;
+    assignedToUserId;
+    assignedToPersonId;
 }
 exports.CreateTaskDto = CreateTaskDto;
 __decorate([
@@ -51,6 +57,12 @@ __decorate([
     __metadata("design:type", String)
 ], CreateTaskDto.prototype, "assignedToPersonId", void 0);
 class UpdateTaskDto {
+    title;
+    description;
+    status;
+    dueAt;
+    assignedToUserId;
+    assignedToPersonId;
 }
 exports.UpdateTaskDto = UpdateTaskDto;
 __decorate([
@@ -83,4 +95,3 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateTaskDto.prototype, "assignedToPersonId", void 0);
-//# sourceMappingURL=dto.js.map

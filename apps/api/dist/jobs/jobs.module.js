@@ -20,4 +20,3 @@ exports.JobsModule = JobsModule = __decorate([
         exports: [jobs_service_1.JobsService]
     })
 ], JobsModule);
-//# sourceMappingURL=jobs.module.js.map

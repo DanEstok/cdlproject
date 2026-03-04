@@ -17,7 +17,22 @@ const common_1 = require("@nestjs/common");
 const provision_auth_guard_1 = require("./provision-auth.guard");
 const prisma_service_1 = require("../prisma/prisma.service");
 const audit_service_1 = require("../audit/audit.service");
+/**
+ * Purpose:
+ * - When a staff user logs in for the first time, create:
+ *   - Organization (if none exists for this clerkUserId)
+ *   - User record mapped to clerkUserId
+ *
+ * Strategy:
+ * - If user exists: return it
+ * - Else: create new org + user
+ *
+ * Note:
+ * - This is MVP-friendly. Later you can add invitation flows and org membership management.
+ */
 let ProvisionController = class ProvisionController {
+    prisma;
+    audit;
     constructor(prisma, audit) {
         this.prisma = prisma;
         this.audit = audit;
@@ -26,10 +41,12 @@ let ProvisionController = class ProvisionController {
         const clerkUserId = req.user?.clerkUserId;
         if (!clerkUserId)
             throw new Error("Missing clerkUserId");
+        // If already provisioned, return user.
         const existing = await this.prisma.user.findUnique({ where: { clerkUserId } });
         if (existing) {
             return { provisioned: true, user: existing };
         }
+        // Create new org + user. Org name can be updated later in settings.
         const org = await this.prisma.organization.create({
             data: { name: `Org for ${clerkUserId.slice(0, 8)}` }
         });
@@ -65,4 +82,3 @@ exports.ProvisionController = ProvisionController = __decorate([
     (0, common_1.Controller)("auth"),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService, audit_service_1.AuditService])
 ], ProvisionController);
-//# sourceMappingURL=provision.controller.js.map
