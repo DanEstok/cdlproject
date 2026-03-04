@@ -6,15 +6,10 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/cases/loading": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/cases/loading.js"
-    ],
-    "/cases/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/cases/page.js"
+      "static/chunks/app/page.js"
     ]
   }
 }

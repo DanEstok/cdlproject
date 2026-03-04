@@ -196,8 +196,8 @@ importers:
   apps/client:
     dependencies:
       '@clerk/nextjs':
-        specifier: ^4.0.0
-        version: 4.31.8(next@14.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^6.0.0
+        version: 6.39.0(next@15.5.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@recovery-platform/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -226,17 +226,17 @@ importers:
         specifier: 14.0.0
         version: 14.0.0(eslint@8.57.1)(typescript@5.9.3)
       next:
-        specifier: 14.0.0
-        version: 14.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^15.0.0
+        version: 15.5.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       postcss:
         specifier: ^8.0.0
         version: 8.5.6
       react:
-        specifier: ^18.0.0
-        version: 18.3.1
+        specifier: ^19.0.0
+        version: 19.2.4
       react-dom:
-        specifier: ^18.0.0
-        version: 18.3.1(react@18.3.1)
+        specifier: ^19.0.0
+        version: 19.2.4(react@19.2.4)
       tailwindcss:
         specifier: ^3.0.0
         version: 3.4.19
