@@ -92,6 +92,5 @@ export default function NewTaskPage() {
           </form>
         </div>
       </div>
-    </div>
   );
 }
