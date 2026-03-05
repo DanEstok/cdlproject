@@ -19,12 +19,11 @@ export default function NewTaskPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">New Task</h1>
-          <p className="text-gray-600">Add a new task to your recovery journey</p>
-        </div>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">New Task</h1>
+        <p className="text-gray-600">Add a new task to your recovery journey</p>
+      </div>
 
         <div className="bg-white rounded-lg shadow">
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
