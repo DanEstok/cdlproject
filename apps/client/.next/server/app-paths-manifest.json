@@ -1,1 +1,9 @@
-{}
+{
+  "/tasks/page": "app/tasks/page.js",
+  "/documents/page": "app/documents/page.js",
+  "/appointments/page": "app/appointments/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/tasks/new/page": "app/tasks/new/page.js",
+  "/documents/upload/page": "app/documents/upload/page.js",
+  "/appointments/schedule/page": "app/appointments/schedule/page.js"
+}
